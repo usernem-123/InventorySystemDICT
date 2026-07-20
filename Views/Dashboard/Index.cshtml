@@ -5,15 +5,50 @@
     ViewData["Title"] = "Dashboard";
 }
 
+
 <div class="container-fluid py-4">
 
-    <h2 class="fw-bold mb-4">
+
+    <!-- OWL WELCOME -->
+
+    <div class="owl-banner mb-4">
+
+
+        <div>
+
+            <h2>
+                Welcome back, Inventory Owl 🦉
+            </h2>
+
+            <p>
+                Smart inventory management. Keep track of your items and transactions easily.
+            </p>
+
+        </div>
+
+
+        <img src="~/images/owl.webp"
+             asp-append-version="true"
+             class="dashboard-owl"/>
+
+
+    </div>
+
+
+
+    <h2 class="fw-bold mb-3">
         Inventory Dashboard
     </h2>
 
+
+
+    <!-- CARDS -->
+
     <div class="row g-4 mb-4">
 
+
         <div class="col-lg-4 col-md-6">
+
             <partial name="_DashboardCard"
                      model='new CardViewModel
                      {
@@ -23,9 +58,13 @@
                         Color="primary",
                         Controller="Inventory"
                      }'/>
+
         </div>
 
+
+
         <div class="col-lg-4 col-md-6">
+
             <partial name="_DashboardCard"
                      model='new CardViewModel
                      {
@@ -34,11 +73,15 @@
                         Icon="fa-solid fa-hand-holding",
                         Color="warning",
                         Controller="Transactions",
-                        Action = "Borrow"
+                        Action="Borrow"
                      }'/>
+
         </div>
 
+
+
         <div class="col-lg-4 col-md-6">
+
             <partial name="_DashboardCard"
                      model='new CardViewModel
                      {
@@ -47,11 +90,16 @@
                         Icon="fa-solid fa-arrow-rotate-left",
                         Color="success",
                         Controller="Transactions",
-                        Action = "Return"
+                        Action="Return"
                      }'/>
+
         </div>
 
+
+
+
         <div class="col-lg-4 col-md-6">
+
             <partial name="_DashboardCard"
                      model='new CardViewModel
                      {
@@ -61,9 +109,14 @@
                         Color="info",
                         Controller="Receive"
                      }'/>
+
         </div>
 
+
+
+
         <div class="col-lg-4 col-md-6">
+
             <partial name="_DashboardCard"
                      model='new CardViewModel
                      {
@@ -73,9 +126,14 @@
                         Color="secondary",
                         Controller="Categories"
                      }'/>
+
         </div>
 
+
+
+
         <div class="col-lg-4 col-md-6">
+
             <partial name="_DashboardCard"
                      model='new CardViewModel
                      {
@@ -86,147 +144,499 @@
                         Controller="Inventory",
                         Action="LowStock"
                      }'/>
+
         </div>
 
+
     </div>
+
+
+
+
+
+    <!-- TRANSACTIONS -->
+
 
     <div class="card shadow-sm border-0">
 
+
         <div class="card-header bg-white">
 
+
             <h5 class="mb-0 fw-bold">
+
                 Recent Transactions
+
             </h5>
 
+
         </div>
+
+
 
         <div class="card-body p-0">
 
+
             <div class="table-responsive">
+
 
                 <table class="table table-hover align-middle mb-0">
 
+
                     <thead class="table-light">
 
+
                         <tr>
+
                             <th>Date</th>
+
                             <th>Action</th>
+
                             <th>Item</th>
+
                             <th>Quantity</th>
+
                             <th>Person</th>
+
                         </tr>
+
 
                     </thead>
 
+
+
                     <tbody>
 
-                        @if(Model.RecentTransactions.Any())
+
+                    @if(Model.RecentTransactions.Any())
+
+                    {
+
+                        @foreach(var transaction in Model.RecentTransactions)
+
                         {
-                            @foreach(var transaction in Model.RecentTransactions)
-                            {
-                                <tr>
 
-                                    <td>
-                                        @transaction.Date.ToString("MMM dd, yyyy hh:mm tt")
-                                    </td>
-
-                                    <td>
-
-                                        @if(transaction.Action=="Borrow")
-                                        {
-                                            <span class="badge bg-warning">
-                                                Borrow
-                                            </span>
-                                        }
-                                        else if(transaction.Action=="Return")
-                                        {
-                                            <span class="badge bg-success">
-                                                Return
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-info">
-                                                Receive
-                                            </span>
-                                        }
-
-                                    </td>
-
-                                    <td>@transaction.ItemName</td>
-
-                                    <td>@transaction.Quantity</td>
-
-                                    <td>@transaction.Person</td>
-
-                                </tr>
-                            }
-                        }
-                        else
-                        {
                             <tr>
 
-                                <td colspan="5" class="text-center p-5 text-muted">
 
-                                    No transactions found.
+                                <td>
+
+                                    @transaction.Date.ToString("MMM dd, yyyy hh:mm tt")
 
                                 </td>
 
+
+
+                                <td>
+
+
+                                    @if(transaction.Action=="Borrow")
+
+                                    {
+
+                                        <span class="badge bg-warning">
+
+                                            Borrow
+
+                                        </span>
+
+                                    }
+
+                                    else if(transaction.Action=="Return")
+
+                                    {
+
+                                        <span class="badge bg-success">
+
+                                            Return
+
+                                        </span>
+
+                                    }
+
+                                    else
+
+                                    {
+
+                                        <span class="badge bg-info">
+
+                                            Receive
+
+                                        </span>
+
+                                    }
+
+
+                                </td>
+
+
+
+                                <td>
+                                    @transaction.ItemName
+                                </td>
+
+
+                                <td>
+                                    @transaction.Quantity
+                                </td>
+
+
+                                <td>
+                                    @transaction.Person
+                                </td>
+
+
+
                             </tr>
+
                         }
+
+                    }
+
+                    else
+
+                    {
+
+                        <tr>
+
+                            <td colspan="5"
+                                class="text-center p-5 text-muted">
+
+                                No transactions found.
+
+                            </td>
+
+                        </tr>
+
+                    }
+
+
 
                     </tbody>
 
+
                 </table>
+
 
             </div>
 
+
         </div>
+
 
     </div>
 
+
 </div>
+
+
+
+
+
 
 <style>
 
-.dashboard-card{
 
-    border-radius:18px;
-    transition:.25s;
-    cursor:pointer;
+body{
+
+    background:#F6F1EB;
 
 }
+
+
+
+
+/* OWL BANNER */
+
+
+/* COMPACT OWL HEADER */
+
+.owl-banner{
+
+    height:170px;
+
+    background:
+    radial-gradient(circle at top left,#fff,#f7ebdc);
+
+    border-radius:25px;
+
+    padding:25px 35px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    overflow:hidden;
+
+    position:relative;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.08);
+
+}
+
+
+
+.owl-banner::after{
+
+    content:"";
+
+    position:absolute;
+
+    right:-80px;
+
+    top:-100px;
+
+    width:300px;
+
+    height:300px;
+
+    background:white;
+
+    border-radius:50%;
+
+}
+
+
+
+.owl-banner h2{
+
+    color:#4D311C;
+
+    font-size:28px;
+
+    font-weight:700;
+
+    margin-bottom:8px;
+
+    position:relative;
+
+    z-index:2;
+
+}
+
+
+
+.owl-banner p{
+
+    color:#777;
+
+    margin:0;
+
+    font-size:15px;
+
+    position:relative;
+
+    z-index:2;
+
+}
+
+
+
+.dashboard-owl{
+
+    width:130px;
+
+    height:130px;
+
+    object-fit:contain;
+
+    position:relative;
+
+    z-index:2;
+
+    animation:float 3s infinite ease-in-out;
+
+}
+
+
+
+
+
+@@keyframes float{
+
+
+    50%{
+
+
+        transform:translateY(-12px);
+
+
+    }
+
+
+}
+
+
+
+
+
+
+/* CARDS */
+
+
+.dashboard-card{
+
+
+    background:white;
+
+
+    border-radius:25px;
+
+
+    transition:.3s;
+
+
+    box-shadow:
+    0 15px 40px rgba(0,0,0,.08);
+
+
+}
+
+
+
+
 
 .dashboard-card:hover{
 
-    transform:translateY(-6px);
-    box-shadow:0 12px 25px rgba(0,0,0,.15);
+
+    transform:translateY(-8px);
+
+
+    box-shadow:
+    0 20px 50px rgba(0,0,0,.15);
+
 
 }
+
+
+
+
+
+.dashboard-card small{
+
+
+    color:#777;
+
+
+}
+
+
+
+
+.dashboard-card h2{
+
+
+    color:#4D311C;
+
+
+    font-size:42px;
+
+
+}
+
+
+
+
+.dashboard-card i{
+
+
+    width:75px;
+
+    height:75px;
+
+
+    display:flex;
+
+
+    align-items:center;
+
+
+    justify-content:center;
+
+
+    border-radius:20px;
+
+
+    background:#F3E7D9;
+
+
+    color:#B56A2E !important;
+
+
+}
+
+
+
+
+
+
+/* TABLE */
+
 
 .card{
 
-    border-radius:18px;
+
+    border-radius:25px;
+
+
+    box-shadow:
+    0 15px 40px rgba(0,0,0,.08);
+
 
 }
 
-.table tbody tr{
 
-    transition:.2s;
+
+
+.card-header{
+
+
+    border-radius:25px 25px 0 0 !important;
+
 
 }
+
+
+
+
 
 .table tbody tr:hover{
 
-    background:#f7f7f7;
+
+    background:#fff7ef;
+
 
 }
+
+
+
+
 
 .badge{
 
-    padding:.55rem .85rem;
-    font-size:.8rem;
+
+    padding:.6rem 1rem;
+
+
+    border-radius:20px;
+
 
 }
+
+
+
+
+.bg-info{
+
+
+    background:#B56A2E !important;
+
+
+}
+
+
 
 </style>

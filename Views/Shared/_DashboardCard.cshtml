@@ -4,15 +4,15 @@
    asp-action="@Model.Action"
    class="text-decoration-none text-dark">
 
-    <div class="card dashboard-card shadow-sm border-0 h-100">
+    <div class="dashboard-card h-100">
 
-        <div class="card-body">
+        <div class="card-body p-4">
 
             <div class="d-flex justify-content-between align-items-center">
 
                 <div>
 
-                    <small class="text-muted">
+                    <small>
                         @Model.Title
                     </small>
 
@@ -22,7 +22,13 @@
 
                 </div>
 
-                <i class="@Model.Icon text-@Model.Color fa-3x"></i>
+
+                <div>
+
+                    <i class="@Model.Icon fa-2x"></i>
+
+                </div>
+
 
             </div>
 

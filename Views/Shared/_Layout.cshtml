@@ -1,105 +1,319 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>@ViewData["Title"] - Inventory System</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+<title>@ViewData["Title"] - Inventory Owl</title>
 
-    <style>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
-        body{
-            background:#f4f6f9;
-            overflow-x:hidden;
-        }
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 
-        .sidebar{
-            position:fixed;
-            left:0;
-            top:0;
-            width:260px;
-            height:100vh;
-            background:#212529;
-            color:white;
-        }
 
-        .sidebar-header{
-            padding:25px;
-            font-size:24px;
-            font-weight:bold;
-            border-bottom:1px solid rgba(255,255,255,.15);
-        }
+<style>
 
-        .sidebar a{
 
-            display:block;
-            padding:16px 25px;
+*{
 
-            color:#ddd;
+    box-sizing:border-box;
 
-            text-decoration:none;
+}
 
-            transition:.2s;
-        }
 
-        .sidebar a:hover{
+body{
 
-            background:#343a40;
+    background:#F6F1EB;
 
-            color:white;
+    overflow-x:hidden;
 
-        }
+    font-family:"Segoe UI",sans-serif;
 
-        .sidebar i{
+}
 
-            width:25px;
 
-        }
 
-        .content{
 
-            margin-left:260px;
 
-            padding:30px;
+/* SIDEBAR */
 
-        }
 
-        .topbar{
+.sidebar{
 
-            background:white;
 
-            border-radius:15px;
+    position:fixed;
 
-            padding:18px 25px;
+    left:0;
 
-            margin-bottom:30px;
+    top:0;
 
-            display:flex;
+    width:260px;
 
-            justify-content:space-between;
+    height:100vh;
 
-            align-items:center;
 
-            box-shadow:0 5px 20px rgba(0,0,0,.08);
+    background:
 
-        }
+    linear-gradient(
+        180deg,
+        #4D311C,
+        #2d1c10
+    );
 
-    </style>
+
+    color:white;
+
+
+    box-shadow:
+
+    10px 0 40px rgba(0,0,0,.15);
+
+
+}
+
+
+
+
+
+.sidebar-header{
+
+    height:90px;
+
+    display:flex;
+
+    align-items:center;
+
+    padding:20px 25px;
+
+    font-size:26px;
+
+    font-weight:700;
+
+    color:#F6E7D5;
+
+    border-bottom:1px solid rgba(255,255,255,.15);
+
+}
+
+
+
+.sidebar-logo{
+
+    width:45px;
+
+    height:45px;
+
+    object-fit:contain;
+
+    margin-right:12px;
+
+}
+
+
+
+
+
+
+
+.sidebar a{
+
+
+    display:flex;
+
+
+    align-items:center;
+
+
+    gap:12px;
+
+
+    padding:15px 25px;
+
+
+    color:#ddd;
+
+
+    text-decoration:none;
+
+
+    transition:.25s;
+
+
+    font-size:16px;
+
+
+}
+
+
+
+
+
+.sidebar a:hover{
+
+
+    background:#B56A2E;
+
+
+    color:white;
+
+
+    padding-left:35px;
+
+
+}
+
+
+
+
+.sidebar i{
+
+
+    width:25px;
+
+    font-size:18px;
+
+
+}
+
+
+
+
+
+
+
+
+/* CONTENT */
+
+
+.content{
+
+
+    margin-left:260px;
+
+
+    padding:30px;
+
+
+}
+
+
+
+
+
+
+/* TOPBAR */
+
+
+.topbar{
+
+
+    background:white;
+
+
+    border-radius:25px;
+
+
+    padding:20px 30px;
+
+
+    margin-bottom:30px;
+
+
+    display:flex;
+
+
+    justify-content:space-between;
+
+
+    align-items:center;
+
+
+    box-shadow:
+
+    0 15px 40px rgba(0,0,0,.08);
+
+
+}
+
+
+
+
+
+.topbar h4{
+
+
+    color:#4D311C;
+
+
+    font-weight:700;
+
+
+}
+
+
+
+
+
+.topbar strong{
+
+
+    color:#B56A2E;
+
+
+}
+
+
+
+
+
+
+/* ACTIVE EFFECT */
+
+
+.sidebar a.active{
+
+
+    background:#B56A2E;
+
+
+    color:white;
+
+
+}
+
+
+
+
+
+</style>
+
 
 </head>
 
+
+
 <body>
+
 
 <div class="sidebar">
 
+
     <div class="sidebar-header">
 
-        Inventory
+        <img src="~/images/owl.webp"
+            asp-append-version="true"
+            class="sidebar-logo" />
+
+        <span>
+            Inventory Owl
+        </span>
 
     </div>
+
+
+
 
     <a asp-controller="Dashboard" asp-action="Index">
 
@@ -109,16 +323,24 @@
 
     </a>
 
-    @if (User.IsInRole("Admin"))
-    {
-        <a asp-controller="Users" asp-action="Index">
 
-            <i class="fa-solid fa-users"></i>
 
-            Users
 
-        </a>
-    }
+@if(User.IsInRole("Admin"))
+{
+
+    <a asp-controller="Users" asp-action="Index">
+
+        <i class="fa-solid fa-users"></i>
+
+        Users
+
+    </a>
+
+}
+
+
+
 
     <a asp-controller="Inventory" asp-action="Index">
 
@@ -128,6 +350,9 @@
 
     </a>
 
+
+
+
     <a asp-controller="Transactions" asp-action="Index">
 
         <i class="fa-solid fa-hand-holding"></i>
@@ -135,6 +360,9 @@
         Transactions
 
     </a>
+
+
+
 
     <a asp-controller="Borrowers" asp-action="Index">
 
@@ -144,6 +372,9 @@
 
     </a>
 
+
+
+
     <a asp-controller="Transactions" asp-action="Return">
 
         <i class="fa-solid fa-arrow-rotate-left"></i>
@@ -151,6 +382,9 @@
         Return
 
     </a>
+
+
+
 
     <a asp-controller="Transactions" asp-action="Receive">
 
@@ -160,10 +394,19 @@
 
     </a>
 
+
+
+
     <a asp-controller="Defects" asp-action="Index">
+
         <i class="fa-solid fa-triangle-exclamation"></i>
+
         Defects
+
     </a>
+
+
+
 
     <a asp-controller="Categories" asp-action="Index">
 
@@ -173,6 +416,9 @@
 
     </a>
 
+
+
+
     <a asp-controller="Reports" asp-action="Index">
 
         <i class="fa-solid fa-chart-column"></i>
@@ -180,6 +426,9 @@
         Reports
 
     </a>
+
+
+
 
     <a asp-controller="Account" asp-action="Logout">
 
@@ -189,11 +438,19 @@
 
     </a>
 
+
 </div>
+
+
+
+
 
 <div class="content">
 
+
+
     <div class="topbar">
+
 
         <h4 class="mb-0">
 
@@ -201,23 +458,40 @@
 
         </h4>
 
+
+
         <div>
 
             Welcome,
 
-            <strong>@User.Identity?.Name</strong>
+            <strong>
+                @User.Identity?.Name
+            </strong>
 
         </div>
 
+
+
     </div>
+
+
+
 
     @RenderBody()
 
+
+
 </div>
+
+
+
+
 
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
+
 @await RenderSectionAsync("Scripts", required:false)
+
 
 </body>
 </html>

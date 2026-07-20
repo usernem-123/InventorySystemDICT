@@ -1,51 +1,324 @@
-
 @model InventorySystem.Models.ViewModels.LoginViewModel
-
 @{
     Layout = null;
 }
 
 <!DOCTYPE html>
-
-<html>
-
+<html lang="en">
 <head>
 
-<meta charset="utf-8"/>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-<meta name="viewport" content="width=device-width"/>
+<title>Inventory Owl</title>
 
-<title>Login</title>
-
-<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
 
 <style>
 
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Segoe UI",sans-serif;
+}
+
 body{
 
-height:100vh;
+    height:100vh;
 
-display:flex;
+    background:#F6F1EB;
 
-justify-content:center;
-
-align-items:center;
-
-background:#eef2f7;
+    overflow:hidden;
 
 }
 
-.login-card{
+.wrapper{
 
-width:400px;
+    display:flex;
 
-padding:35px;
+    height:100vh;
 
-border-radius:20px;
+}
 
-background:white;
+/* LEFT */
 
-box-shadow:0 10px 30px rgba(0,0,0,.12);
+.left{
+
+    width:50%;
+
+    position:relative;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-direction:column;
+
+    background:
+    radial-gradient(circle at top left,#fff,#f7ebdc);
+
+}
+
+.left::after{
+
+    content:"";
+
+    position:absolute;
+
+    right:-180px;
+
+    top:0;
+
+    width:500px;
+
+    height:100%;
+
+    background:white;
+
+    border-radius:50%;
+
+}
+
+/* TITLE */
+
+.brand{
+
+    position:relative;
+
+    z-index:2;
+
+    text-align:center;
+
+}
+
+.brand h5{
+
+    color:#C86E20;
+
+    font-size:30px;
+
+    font-family:cursive;
+
+}
+
+.brand h1{
+
+    font-size:64px;
+
+    font-weight:700;
+
+    color:#4D311C;
+
+}
+
+.brand p{
+
+    color:#666;
+
+    margin-top:10px;
+
+}
+
+/* OWL */
+
+.owl{
+
+    position:relative;
+
+    z-index:2;
+
+    width:280px;
+
+    margin-top:25px;
+
+    animation:float 3s infinite ease-in-out;
+
+}
+
+@@keyframes float{
+
+50%{
+
+transform:translateY(-15px);
+
+}
+
+}
+
+/* CHAT */
+
+.chat{
+
+    z-index:2;
+
+    background:white;
+
+    margin-top:25px;
+
+    padding:18px;
+
+    border-radius:18px;
+
+    box-shadow:0 15px 40px rgba(0,0,0,.08);
+
+    text-align:center;
+
+}
+
+/* ICONS */
+
+.floating{
+
+    position:absolute;
+
+    width:70px;
+
+    height:70px;
+
+    background:white;
+
+    border-radius:18px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+    font-size:28px;
+
+    color:#B56A2E;
+
+}
+
+.box{top:180px;left:120px;}
+.chart{top:330px;right:120px;}
+.clip{top:220px;right:70px;}
+
+/* RIGHT */
+
+.right{
+
+    width:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:white;
+
+}
+
+/* LOGIN CARD */
+
+.card-login{
+
+    width:500px;
+
+    background:white;
+
+    border-radius:30px;
+
+    padding:50px;
+
+    box-shadow:0 20px 60px rgba(0,0,0,.08);
+
+}
+
+.lock{
+
+    width:65px;
+
+    height:65px;
+
+    margin:auto;
+
+    border-radius:50%;
+
+    background:#F3E7D9;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:#B56A2E;
+
+    font-size:28px;
+
+}
+
+.card-login h2{
+
+    margin-top:20px;
+
+    text-align:center;
+
+    font-size:42px;
+
+    font-weight:700;
+
+}
+
+.subtitle{
+
+    text-align:center;
+
+    color:#777;
+
+    margin-bottom:35px;
+
+}
+
+.form-control{
+
+    height:55px;
+
+    border-radius:12px;
+
+}
+
+.btn-login{
+
+    height:55px;
+
+    border-radius:12px;
+
+    background:#B56A2E;
+
+    border:none;
+
+    color:white;
+
+    font-weight:600;
+
+}
+
+.btn-login:hover{
+
+    background:#9b5c2a;
+
+}
+
+.footer{
+
+    margin-top:25px;
+
+    text-align:center;
+
+    color:#888;
+
+    font-size:14px;
 
 }
 
@@ -55,38 +328,92 @@ box-shadow:0 10px 30px rgba(0,0,0,.12);
 
 <body>
 
-<div class="login-card">
+<div class="wrapper">
 
-<div class="text-center mb-3">
-        <img src="~/images/dictlogo.png"
-             asp-append-version="true"
-             alt="Inventory Logo"
-             style="width:100px;height:100px;object-fit:contain;">
-    </div>
+<div class="left">
 
 
+<div class="floating chart">
+<i class="fa-solid fa-chart-column"></i>
+</div>
+
+<div class="floating clip">
+<i class="fa-solid fa-clipboard-check"></i>
+</div>
+
+<div class="brand">
+
+<h5>Welcome to</h5>
+
+<h1>Inventory Owl</h1>
+
+<p>Smart Inventory. Clear Insights. Better Management.</p>
+
+</div>
+
+<img src="~/images/owl.webp"
+class="owl"
+asp-append-version="true"/>
+
+<div class="chat">
+
+<strong>Hello there!</strong>
+
+<br>
+
+Let's keep your inventory organized and under control.
+
+</div>
+
+</div>
+
+<div class="right">
+
+<div class="card-login">
+
+<div class="lock">
+
+<i class="fa-solid fa-lock"></i>
+
+</div>
+
+<h2>Login</h2>
+
+<div class="subtitle">
+
+Please sign in to continue
+
+</div>
 
 <form asp-action="Login" method="post">
 
 <div class="mb-3">
 
-<label>Username</label>
+<label class="mb-2">Username</label>
 
-<input asp-for="Username" class="form-control"/>
+<input asp-for="Username" class="form-control">
 
 </div>
 
 <div class="mb-4">
 
-<label>Password</label>
+<label class="mb-2">Password</label>
 
-<input asp-for="Password" class="form-control"/>
+<input asp-for="Password"
+type="password"
+class="form-control">
 
 </div>
 
-<div asp-validation-summary="All" class="text-danger mb-3"></div>
+<div asp-validation-summary="All"
+class="text-danger mb-3">
+</div>
 
-<button class="btn btn-dark w-100">
+<button class="btn btn-login w-100">
+
+<i class="fa-solid fa-right-to-bracket"></i>
+
+&nbsp;
 
 Login
 
@@ -94,8 +421,17 @@ Login
 
 </form>
 
+<div class="footer">
+
+© @DateTime.Now.Year Inventory Owl
+
+</div>
+
+</div>
+
+</div>
+
 </div>
 
 </body>
-
 </html>
