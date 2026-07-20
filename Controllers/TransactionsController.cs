@@ -195,4 +195,16 @@ public class TransactionsController : Controller
             location = item.Location
         });
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetBorrowedItemsByBorrower(int borrowerId)
+    {
+        var items = await _service.GetBorrowedItemsByBorrowerAsync(borrowerId);
+
+        return Json(items.Select(x => new
+        {
+            id = x.Id,
+            text = $"{x.ItemName} ({x.ItemCode})"
+        }));
+    }
 }

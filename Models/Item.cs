@@ -28,5 +28,9 @@ public class Item
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
     public ItemStatus Status { get; set; } = ItemStatus.Available;
 
+    public int? CurrentBorrowerId { get; set; }
+
+    public Borrower? CurrentBorrower { get; set; }
+
     public ICollection<Transaction>? Transactions { get; set; }
 }

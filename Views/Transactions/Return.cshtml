@@ -16,6 +16,32 @@
 
             @Html.AntiForgeryToken()
 
+            <div class="mb-4">
+
+                <label class="form-label fw-bold">
+                    Borrower
+                </label>
+
+                <select id="borrowerId"
+                        name="borrowerId"
+                        class="form-select"
+                        required>
+
+                    <option value="">
+                        Select Borrower
+                    </option>
+
+                    @foreach (var borrower in ViewBag.Borrowers)
+                    {
+                        <option value="@borrower.Id">
+                            @borrower.FullName
+                        </option>
+                    }
+
+                </select>
+
+            </div>
+
             <div class="row">
 
                 <div class="col-md-5">
@@ -27,14 +53,12 @@
                     <select id="availableItems"
                             class="form-select"
                             size="12"
-                            multiple>
+                            multiple
+                            disabled>
 
-                        @foreach (var item in ViewBag.Items)
-                        {
-                            <option value="@item.Id">
-                                @item.ItemName (@item.ItemCode)
-                            </option>
-                        }
+                        <option>
+                            Select a borrower first
+                        </option>
 
                     </select>
 
@@ -76,32 +100,7 @@
 
             </div>
 
-            <hr class="my-4" />
-
-            <div class="mb-3">
-
-                <label class="form-label">
-                    Borrower
-                </label>
-
-                <select name="borrowerId"
-                        class="form-select"
-                        required>
-
-                    <option value="">
-                        Select Borrower
-                    </option>
-
-                    @foreach (var borrower in ViewBag.Borrowers)
-                    {
-                        <option value="@borrower.Id">
-                            @borrower.FullName
-                        </option>
-                    }
-
-                </select>
-
-            </div>
+            <hr class="my-4"/>
 
             <div class="mb-3">
 
@@ -142,13 +141,64 @@
 
 <script>
 
+const borrower = document.getElementById("borrowerId");
 const available = document.getElementById("availableItems");
 const selected = document.getElementById("returnItems");
+
+borrower.addEventListener("change", async function () {
+
+    available.innerHTML = "";
+    selected.innerHTML = "";
+    available.disabled = true;
+
+    if (this.value === "") {
+
+        available.innerHTML =
+            "<option>Select a borrower first</option>";
+
+        return;
+    }
+
+    const response = await fetch(
+        `/Transactions/GetBorrowedItemsByBorrower?borrowerId=${this.value}`
+    );
+
+    if (!response.ok)
+        return;
+
+    const items = await response.json();
+
+    available.innerHTML = "";
+
+    if (items.length === 0) {
+
+        available.innerHTML =
+            "<option>No borrowed items</option>";
+
+        return;
+    }
+
+    items.forEach(item => {
+
+        const option = document.createElement("option");
+
+        option.value = item.id;
+        option.text = item.text;
+
+        available.appendChild(option);
+
+    });
+
+    available.disabled = false;
+
+});
 
 document.getElementById("btnAdd").onclick = function () {
 
     [...available.selectedOptions].forEach(option => {
+
         selected.appendChild(option);
+
     });
 
 };
@@ -156,7 +206,9 @@ document.getElementById("btnAdd").onclick = function () {
 document.getElementById("btnRemove").onclick = function () {
 
     [...selected.selectedOptions].forEach(option => {
+
         available.appendChild(option);
+
     });
 
 };
@@ -164,11 +216,13 @@ document.getElementById("btnRemove").onclick = function () {
 document.querySelector("form").addEventListener("submit", function () {
 
     const hidden = document.getElementById("hiddenItems");
+
     hidden.innerHTML = "";
 
     [...selected.options].forEach(option => {
 
         const input = document.createElement("input");
+
         input.type = "hidden";
         input.name = "itemIds";
         input.value = option.value;
@@ -180,5 +234,7 @@ document.querySelector("form").addEventListener("submit", function () {
 });
 
 </script>
+
+<partial name="_ValidationScriptsPartial"/>
 
 }

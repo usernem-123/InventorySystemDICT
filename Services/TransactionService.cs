@@ -104,6 +104,7 @@ public class TransactionService : ITransactionService
 
 
         item.Status = ItemStatus.Borrowed;
+        item.CurrentBorrowerId = borrowerId;
         item.UpdatedAt = DateTime.Now;
 
 
@@ -124,44 +125,41 @@ public class TransactionService : ITransactionService
 
 
 
-    public async Task<bool> ReturnAsync(
-        int itemId,
-        int borrowerId,
-        int userId,
-        string? remarks)
-    {
-
-        var item = await _db.Items.FindAsync(itemId);
-
-
-        if (item == null)
-            return false;
-
-
-        if (item.Status != ItemStatus.Borrowed)
-            return false;
-
-
-        item.Status = ItemStatus.Available;
-        item.UpdatedAt = DateTime.Now;
-
-
-        _db.Transactions.Add(new Transaction
+        public async Task<bool> ReturnAsync(
+            int itemId,
+            int borrowerId,
+            int userId,
+            string? remarks)
         {
-            ItemId = itemId,
-            BorrowerId = borrowerId,
-            Quantity = 1,
-            TransactionType = TransactionType.Return,
-            Remarks = remarks,
-            TransactionDate = DateTime.Now,
-            UserId = userId
-        });
+            var item = await _db.Items.FindAsync(itemId);
 
+            if (item == null)
+                return false;
 
-        await _db.SaveChangesAsync();
+            if (item.Status != ItemStatus.Borrowed)
+                return false;
 
+            if (item.CurrentBorrowerId != borrowerId)
+                return false;
 
-        return true;
+            item.Status = ItemStatus.Available;
+            item.CurrentBorrowerId = null;
+            item.UpdatedAt = DateTime.Now;
+
+            _db.Transactions.Add(new Transaction
+            {
+                ItemId = itemId,
+                BorrowerId = borrowerId,
+                Quantity = 1,
+                TransactionType = TransactionType.Return,
+                Remarks = remarks,
+                TransactionDate = DateTime.Now,
+                UserId = userId
+            });
+
+            await _db.SaveChangesAsync();
+
+            return true;
     }
 
     public async Task ReceiveAsync(
@@ -237,5 +235,15 @@ public class TransactionService : ITransactionService
 
 
         await _db.SaveChangesAsync();
+    }
+
+    public async Task<List<Item>> GetBorrowedItemsByBorrowerAsync(int borrowerId)
+    {
+        return await _db.Items
+            .Where(i =>
+                i.Status == ItemStatus.Borrowed &&
+                i.CurrentBorrowerId == borrowerId)
+            .OrderBy(i => i.ItemName)
+            .ToListAsync();
     }
 }

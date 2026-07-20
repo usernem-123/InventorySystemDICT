@@ -17,6 +17,7 @@ public interface ITransactionService
     Task<List<Category>> GetCategoriesAsync();
 
     Task<Item?> GetItemAsync(int id);
+    Task<List<Item>> GetBorrowedItemsByBorrowerAsync(int borrowerId);
 
     Task ReceiveAsync(ReceiveViewModel vm, int userId);
 
