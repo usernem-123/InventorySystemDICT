@@ -1,0 +1,62 @@
+@model List<InventorySystem.Models.Item>
+
+@{
+    ViewData["Title"]="Inventory Report";
+}
+
+
+<table class="table table-bordered">
+
+<thead>
+
+<tr>
+<th>Code</th>
+<th>Name</th>
+<th>Category</th>
+<th>Serial</th>
+<th>Status</th>
+</tr>
+
+</thead>
+
+
+<tbody>
+
+@foreach(var item in Model)
+{
+
+<tr>
+
+<td>@item.ItemCode</td>
+
+<td>@item.ItemName</td>
+
+<td>@item.Category?.Name</td>
+
+<td>@item.SerialNumber</td>
+
+<td>
+
+@if(item.Status == ItemStatus.Available)
+{
+<span class="badge bg-success">
+Available
+</span>
+}
+else
+{
+<span class="badge bg-warning">
+Borrowed
+</span>
+}
+
+</td>
+
+
+</tr>
+
+}
+
+</tbody>
+
+</table>

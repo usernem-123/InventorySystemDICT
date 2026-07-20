@@ -1,0 +1,192 @@
+@{
+    ViewData["Title"] = "Borrow Items";
+}
+
+<div class="card shadow">
+
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">
+            Borrow Items
+        </h4>
+    </div>
+
+    <div class="card-body">
+
+        <form asp-action="Borrow" method="post">
+
+            @Html.AntiForgeryToken()
+
+            <div class="row">
+
+                <div class="col-md-5">
+
+                    <label class="form-label fw-bold">
+                        Available Items
+                    </label>
+
+                    <select id="availableItems"
+                            class="form-select"
+                            size="12"
+                            multiple>
+
+                        @foreach (var item in ViewBag.Items)
+                        {
+                            <option value="@item.Id">
+                                @item.ItemName (@item.ItemCode)
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-2 d-flex flex-column justify-content-center">
+
+                    <button type="button"
+                            id="btnAdd"
+                            class="btn btn-success mb-2">
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </button>
+
+                    <button type="button"
+                            id="btnRemove"
+                            class="btn btn-danger">
+
+                        <i class="fa-solid fa-arrow-left"></i>
+
+                    </button>
+
+                </div>
+
+                <div class="col-md-5">
+
+                    <label class="form-label fw-bold">
+                        Borrow List
+                    </label>
+
+                    <select id="borrowItems"
+                            class="form-select"
+                            size="12"
+                            multiple>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <hr class="my-4"/>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Borrower
+                </label>
+
+                <select name="borrowerId"
+                        class="form-select"
+                        required>
+
+                    <option value="">
+                        Select Borrower
+                    </option>
+
+                    @foreach (var borrower in ViewBag.Borrowers)
+                    {
+                        <option value="@borrower.Id">
+                            @borrower.FullName - @borrower.Department
+                        </option>
+                    }
+
+                </select>
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Remarks
+                </label>
+
+                <textarea name="remarks"
+                          class="form-control"
+                          rows="3"></textarea>
+
+            </div>
+
+
+            <div id="hiddenItems"></div>
+
+
+            <button type="submit"
+                    class="btn btn-success">
+
+                <i class="fa-solid fa-check"></i>
+                Borrow Selected Items
+
+            </button>
+
+            <a asp-action="Index"
+               class="btn btn-secondary">
+
+                Cancel
+
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts{
+
+<script>
+
+const available = document.getElementById("availableItems");
+const selected = document.getElementById("borrowItems");
+
+document.getElementById("btnAdd").onclick = function () {
+
+    [...available.selectedOptions].forEach(option => {
+        selected.appendChild(option);
+    });
+
+};
+
+document.getElementById("btnRemove").onclick = function () {
+
+    [...selected.selectedOptions].forEach(option => {
+        available.appendChild(option);
+    });
+
+};
+
+document.querySelector("form").addEventListener("submit", function () {
+
+    const hidden = document.getElementById("hiddenItems");
+    hidden.innerHTML = "";
+
+    [...selected.options].forEach(option => {
+
+        option.selected = true;
+
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "itemIds";
+        input.value = option.value;
+
+        hidden.appendChild(input);
+
+    });
+
+});
+
+</script>
+
+}

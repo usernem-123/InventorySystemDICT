@@ -1,0 +1,232 @@
+@model InventorySystem.Models.ViewModels.DashboardViewModel
+@using InventorySystem.Models.ViewModels
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid py-4">
+
+    <h2 class="fw-bold mb-4">
+        Inventory Dashboard
+    </h2>
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-lg-4 col-md-6">
+            <partial name="_DashboardCard"
+                     model='new CardViewModel
+                     {
+                        Title="Items",
+                        Count=Model.Cards.TotalItems,
+                        Icon="fa-solid fa-box",
+                        Color="primary",
+                        Controller="Inventory"
+                     }'/>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+            <partial name="_DashboardCard"
+                     model='new CardViewModel
+                     {
+                        Title="Borrowed",
+                        Count=Model.Cards.BorrowedItems,
+                        Icon="fa-solid fa-hand-holding",
+                        Color="warning",
+                        Controller="Transactions",
+                        Action = "Borrow"
+                     }'/>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+            <partial name="_DashboardCard"
+                     model='new CardViewModel
+                     {
+                        Title="Returned",
+                        Count=Model.Cards.ReturnedItems,
+                        Icon="fa-solid fa-arrow-rotate-left",
+                        Color="success",
+                        Controller="Transactions",
+                        Action = "Return"
+                     }'/>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+            <partial name="_DashboardCard"
+                     model='new CardViewModel
+                     {
+                        Title="Received",
+                        Count=Model.Cards.ReceivedItems,
+                        Icon="fa-solid fa-truck-ramp-box",
+                        Color="info",
+                        Controller="Receive"
+                     }'/>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+            <partial name="_DashboardCard"
+                     model='new CardViewModel
+                     {
+                        Title="Categories",
+                        Count=Model.Cards.Categories,
+                        Icon="fa-solid fa-layer-group",
+                        Color="secondary",
+                        Controller="Categories"
+                     }'/>
+        </div>
+
+        <div class="col-lg-4 col-md-6">
+            <partial name="_DashboardCard"
+                     model='new CardViewModel
+                     {
+                        Title="Low Stock",
+                        Count=Model.Cards.LowStock,
+                        Icon="fa-solid fa-triangle-exclamation",
+                        Color="danger",
+                        Controller="Inventory",
+                        Action="LowStock"
+                     }'/>
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white">
+
+            <h5 class="mb-0 fw-bold">
+                Recent Transactions
+            </h5>
+
+        </div>
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+                            <th>Date</th>
+                            <th>Action</th>
+                            <th>Item</th>
+                            <th>Quantity</th>
+                            <th>Person</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @if(Model.RecentTransactions.Any())
+                        {
+                            @foreach(var transaction in Model.RecentTransactions)
+                            {
+                                <tr>
+
+                                    <td>
+                                        @transaction.Date.ToString("MMM dd, yyyy hh:mm tt")
+                                    </td>
+
+                                    <td>
+
+                                        @if(transaction.Action=="Borrow")
+                                        {
+                                            <span class="badge bg-warning">
+                                                Borrow
+                                            </span>
+                                        }
+                                        else if(transaction.Action=="Return")
+                                        {
+                                            <span class="badge bg-success">
+                                                Return
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-info">
+                                                Receive
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                    <td>@transaction.ItemName</td>
+
+                                    <td>@transaction.Quantity</td>
+
+                                    <td>@transaction.Person</td>
+
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+
+                                <td colspan="5" class="text-center p-5 text-muted">
+
+                                    No transactions found.
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+
+.dashboard-card{
+
+    border-radius:18px;
+    transition:.25s;
+    cursor:pointer;
+
+}
+
+.dashboard-card:hover{
+
+    transform:translateY(-6px);
+    box-shadow:0 12px 25px rgba(0,0,0,.15);
+
+}
+
+.card{
+
+    border-radius:18px;
+
+}
+
+.table tbody tr{
+
+    transition:.2s;
+
+}
+
+.table tbody tr:hover{
+
+    background:#f7f7f7;
+
+}
+
+.badge{
+
+    padding:.55rem .85rem;
+    font-size:.8rem;
+
+}
+
+</style>

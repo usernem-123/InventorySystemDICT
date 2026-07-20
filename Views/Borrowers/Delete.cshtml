@@ -1,0 +1,48 @@
+@model InventorySystem.Models.Borrower
+
+@{
+    ViewData["Title"] = "Delete Borrower";
+}
+
+<div class="card shadow">
+
+<div class="card-header bg-danger text-white">
+
+<h4>Delete Borrower</h4>
+
+</div>
+
+<div class="card-body">
+
+<div class="alert alert-warning">
+
+Delete borrower
+
+<strong>@Model.FullName</strong>?
+
+</div>
+
+<form asp-action="Delete">
+
+@Html.AntiForgeryToken()
+
+<input asp-for="Id" type="hidden"/>
+
+<button class="btn btn-danger">
+
+Delete
+
+</button>
+
+<a asp-action="Index"
+class="btn btn-secondary">
+
+Cancel
+
+</a>
+
+</form>
+
+</div>
+
+</div>

@@ -1,0 +1,74 @@
+@model List<InventorySystem.Models.Item>
+
+@{
+    ViewData["Title"] = "Defective Items";
+}
+
+<div class="card shadow">
+
+    <div class="card-header bg-danger text-white">
+        <h4 class="mb-0">Defective Items</h4>
+    </div>
+
+    <div class="card-body">
+
+        <table class="table table-bordered table-hover">
+
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Serial Number</th>
+                    <th>Location</th>
+                    <th>Restore</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            @foreach(var item in Model)
+            {
+                <tr>
+
+                    <td>@item.ItemCode</td>
+
+                    <td>@item.ItemName</td>
+
+                    <td>@item.Category?.Name</td>
+
+                    <td>@item.SerialNumber</td>
+
+                    <td>@item.Location</td>
+
+                    <td>
+
+                        <form asp-action="Restore"
+                              method="post">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="id"
+                                   value="@item.Id"/>
+
+                            <button class="btn btn-success btn-sm">
+
+                                Restore
+
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+            }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

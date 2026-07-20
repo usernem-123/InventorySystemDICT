@@ -1,0 +1,47 @@
+@model IEnumerable<InventorySystem.Models.User>
+
+<h3>Users</h3>
+
+<a asp-action="Create" class="btn btn-primary mb-3">
+    Add User
+</a>
+
+<table class="table table-bordered">
+
+<thead>
+<tr>
+<th>Name</th>
+<th>Username</th>
+<th>Role</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody>
+
+@foreach(var u in Model)
+{
+<tr>
+
+<td>@u.FullName</td>
+<td>@u.Username</td>
+<td>@u.Role</td>
+
+<td>
+
+<a asp-action="Edit" asp-route-id="@u.Id" class="btn btn-warning btn-sm">
+Edit
+</a>
+
+<a asp-action="Delete" asp-route-id="@u.Id" class="btn btn-danger btn-sm">
+Delete
+</a>
+
+</td>
+
+</tr>
+}
+
+</tbody>
+
+</table>

@@ -1,0 +1,149 @@
+@model InventorySystem.Models.ViewModels.InventoryFormViewModel
+
+@{
+    ViewData["Title"] = "Edit Item";
+}
+
+<div class="container-fluid py-4">
+
+    <div class="card shadow border-0">
+
+        <div class="card-header bg-warning">
+
+            <h4 class="mb-0">
+                Edit Inventory Item
+            </h4>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <form asp-action="Edit" method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input asp-for="Id" hidden />
+
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Item Code
+                    </label>
+
+                    <input asp-for="ItemCode"
+                           class="form-control"
+                           readonly />
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Item Name
+                    </label>
+
+                    <input asp-for="ItemName"
+                           class="form-control"/>
+
+                    <span asp-validation-for="ItemName"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Category
+                    </label>
+
+                    <select asp-for="CategoryId"
+                            asp-items="Model.Categories"
+                            class="form-select">
+
+                        <option value="">
+                            Select Category
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Description
+                    </label>
+
+                    <textarea asp-for="Description"
+                              class="form-control">
+                    </textarea>
+
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="SerialNumber" class="form-label"></label>
+                    <input asp-for="SerialNumber" class="form-control" />
+                    <span asp-validation-for="SerialNumber" class="text-danger"></span>
+                </div>
+
+
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Location
+                        </label>
+
+                        <input asp-for="Location"
+                               class="form-control"/>
+
+                    </div>
+
+                </div>
+
+
+                <div class="mt-4">
+
+                    <button class="btn btn-warning">
+
+                        Update
+
+                    </button>
+
+
+                    <a asp-action="Index"
+                       class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts{
+
+    <partial name="_ValidationScriptsPartial"/>
+
+}

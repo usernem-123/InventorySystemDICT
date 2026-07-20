@@ -1,0 +1,98 @@
+
+@model InventorySystem.Models.ViewModels.LoginViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8"/>
+
+<meta name="viewport" content="width=device-width"/>
+
+<title>Login</title>
+
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+
+<style>
+
+body{
+
+height:100vh;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+background:#eef2f7;
+
+}
+
+.login-card{
+
+width:400px;
+
+padding:35px;
+
+border-radius:20px;
+
+background:white;
+
+box-shadow:0 10px 30px rgba(0,0,0,.12);
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="login-card">
+
+<h2 class="text-center mb-4">
+
+Inventory Login
+
+</h2>
+
+<form asp-action="Login" method="post">
+
+<div class="mb-3">
+
+<label>Username</label>
+
+<input asp-for="Username" class="form-control"/>
+
+</div>
+
+<div class="mb-4">
+
+<label>Password</label>
+
+<input asp-for="Password" class="form-control"/>
+
+</div>
+
+<div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+<button class="btn btn-dark w-100">
+
+Login
+
+</button>
+
+</form>
+
+</div>
+
+</body>
+
+</html>

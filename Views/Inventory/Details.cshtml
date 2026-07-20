@@ -1,0 +1,174 @@
+@model InventorySystem.Models.Item
+
+@{
+    ViewData["Title"] = "Item Details";
+}
+
+<div class="container-fluid py-4">
+
+
+    <div class="card shadow border-0">
+
+
+        <div class="card-header bg-info text-white">
+
+            <h4 class="mb-0">
+                Item Details
+            </h4>
+
+        </div>
+
+
+        <div class="card-body">
+
+
+            <div class="row">
+
+
+                <div class="col-md-6">
+
+
+                    <table class="table">
+
+
+                        <tr>
+
+                            <th>
+                                Item Code
+                            </th>
+
+                            <td>
+                                @Model.ItemCode
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <th>
+                                Item Name
+                            </th>
+
+                            <td>
+                                @Model.ItemName
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <th>
+                                Category
+                            </th>
+
+                            <td>
+                                @Model.Category?.Name
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <th>
+                                Serial Number
+                            </th>
+
+                            <td>
+                                @Model.SerialNumber
+                            </td>
+
+                        </tr>
+
+
+                    </table>
+
+
+                </div>
+
+
+
+                <div class="col-md-6">
+
+
+                    <table class="table">
+
+
+                        <tr>
+
+                            <th>
+                                Location
+                            </th>
+
+                            <td>
+                                @Model.Location
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <th>
+                                Description
+                            </th>
+
+                            <td>
+                                @Model.Description
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <th>
+                                Last Updated
+                            </th>
+
+                            <td>
+                                @Model.UpdatedAt.ToString("MMM dd yyyy hh:mm tt")
+                            </td>
+
+                        </tr>
+
+
+                    </table>
+
+
+                </div>
+
+
+            </div>
+
+
+            <div class="mt-3">
+
+                <a asp-action="Edit"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-warning">
+
+                    Edit
+
+                </a>
+
+
+                <a asp-action="Index"
+                   class="btn btn-secondary">
+
+                    Back
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</div>

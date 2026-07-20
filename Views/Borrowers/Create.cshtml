@@ -1,0 +1,66 @@
+@model InventorySystem.Models.Borrower
+
+@{
+    ViewData["Title"] = "Add Borrower";
+}
+
+<div class="card shadow">
+
+<div class="card-header bg-success text-white">
+
+<h4>Add Borrower</h4>
+
+</div>
+
+<div class="card-body">
+
+<form asp-action="Create">
+
+@Html.AntiForgeryToken()
+
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<div class="mb-3">
+<label asp-for="FullName"></label>
+<input asp-for="FullName" class="form-control"/>
+<span asp-validation-for="FullName" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+<label asp-for="Department"></label>
+<input asp-for="Department" class="form-control"/>
+</div>
+
+<div class="mb-3">
+<label asp-for="Position"></label>
+<input asp-for="Position" class="form-control"/>
+</div>
+
+<div class="mb-3">
+<label asp-for="ContactNumber"></label>
+<input asp-for="ContactNumber" class="form-control"/>
+</div>
+
+<div class="mb-3">
+<label asp-for="Email"></label>
+<input asp-for="Email" class="form-control"/>
+</div>
+
+<button class="btn btn-success">
+Save
+</button>
+
+<a asp-action="Index"
+class="btn btn-secondary">
+Cancel
+</a>
+
+</form>
+
+</div>
+
+</div>
+
+@section Scripts{
+<partial name="_ValidationScriptsPartial"/>
+}

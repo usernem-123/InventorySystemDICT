@@ -1,0 +1,245 @@
+@model InventorySystem.Models.ViewModels.ReceiveViewModel
+
+@{
+    ViewData["Title"] = "Receive Item";
+}
+
+<div class="container-fluid py-4">
+
+    <div class="card shadow border-0">
+
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0">
+                Receive Inventory Item
+            </h4>
+        </div>
+
+
+        <div class="card-body">
+
+            <form asp-action="Receive" method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3">
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Existing Item
+                    </label>
+
+                    <select asp-for="ExistingItemId"
+                            id="ExistingItemId"
+                            asp-items="Model.ExistingItems"
+                            class="form-select">
+
+                        <option value="">
+                            New Item
+                        </option>
+
+                    </select>
+
+                    <small class="text-muted">
+                        Select existing item to copy details, then enter new serial number.
+                    </small>
+
+                </div>
+
+
+                <hr />
+
+
+                <div class="mb-3">
+
+                    <label asp-for="ItemName"
+                           class="form-label">
+                    </label>
+
+                    <input asp-for="ItemName"
+                           id="ItemName"
+                           class="form-control" />
+
+                    <span asp-validation-for="ItemName"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label asp-for="Description"
+                           class="form-label">
+                    </label>
+
+                    <textarea asp-for="Description"
+                              id="Description"
+                              class="form-control"></textarea>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label asp-for="CategoryId"
+                           class="form-label">
+                    </label>
+
+                    <select asp-for="CategoryId"
+                            id="CategoryId"
+                            asp-items="Model.Categories"
+                            class="form-select">
+
+                        <option value="">
+                            Select Category
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <label asp-for="Location"
+                               class="form-label">
+                        </label>
+
+                        <input asp-for="Location"
+                               id="Location"
+                               class="form-control" />
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label asp-for="SerialNumber"
+                               class="form-label">
+                        </label>
+
+                        <input asp-for="SerialNumber"
+                               class="form-control" />
+
+                        <span asp-validation-for="SerialNumber"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="row mt-3">
+
+                    <div class="col-md-6">
+
+                        <label asp-for="Quantity"
+                               class="form-label">
+                        </label>
+
+                        <input asp-for="Quantity"
+                               class="form-control"
+                               type="number"
+                               min="1" />
+
+                    </div>
+
+                </div>
+
+
+                <div class="mb-3 mt-3">
+
+                    <label asp-for="Remarks"
+                           class="form-label">
+                    </label>
+
+                    <textarea asp-for="Remarks"
+                              class="form-control"></textarea>
+
+                </div>
+
+
+                <button class="btn btn-info text-white">
+                    Receive Item
+                </button>
+
+
+                <a asp-action="Index"
+                   class="btn btn-secondary">
+
+                    Cancel
+
+                </a>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+<script>
+
+document.getElementById("ExistingItemId")
+.addEventListener("change", async function(){
+
+    if(this.value === "")
+    {
+        document.getElementById("ItemName").value = "";
+        document.getElementById("Description").value = "";
+        document.getElementById("CategoryId").value = "";
+        document.getElementById("Location").value = "";
+
+        return;
+    }
+
+
+    const response = await fetch(`/Transactions/GetItem/${this.value}`);
+
+
+    if(!response.ok)
+    {
+        console.log("Failed to load item");
+        return;
+    }
+
+
+    const item = await response.json();
+
+
+    document.getElementById("ItemName").value =
+        item.itemName ?? "";
+
+
+    document.getElementById("Description").value =
+        item.description ?? "";
+
+
+    document.getElementById("CategoryId").value =
+        item.categoryId;
+
+
+    document.getElementById("Location").value =
+        item.location ?? "";
+
+
+});
+
+</script>
+
+
+<partial name="_ValidationScriptsPartial"/>
+
+}

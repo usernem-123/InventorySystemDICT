@@ -1,0 +1,94 @@
+@model List<InventorySystem.Models.Transaction>
+
+@{
+    ViewData["Title"] = "Transactions";
+}
+
+
+<div class="card shadow">
+
+    <div class="card-header bg-primary text-white d-flex justify-content-between">
+
+        <h4 class="mb-0">
+            Transaction History
+        </h4>
+
+
+        <a asp-action="Borrow"
+           class="btn btn-light">
+
+            Borrow Item
+
+        </a>
+
+    </div>
+
+
+    <div class="card-body">
+
+
+        <table class="table table-striped">
+
+
+            <thead>
+
+                <tr>
+
+                    <th>Item</th>
+                    <th>Borrower</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Remarks</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+            @foreach(var t in Model)
+            {
+
+                <tr>
+
+                    <td>
+                        @t.Item?.ItemName
+                    </td>
+
+
+                    <td>
+                        @t.Borrower?.FullName
+                    </td>
+
+
+                    <td>
+                        @t.TransactionType
+                    </td>
+
+
+                    <td>
+                        @t.TransactionDate.ToString("yyyy-MM-dd HH:mm")
+                    </td>
+
+
+                    <td>
+                        @t.Remarks
+                    </td>
+
+                </tr>
+
+            }
+
+
+            </tbody>
+
+
+        </table>
+
+
+    </div>
+
+
+</div>

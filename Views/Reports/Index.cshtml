@@ -1,0 +1,71 @@
+@{
+    ViewData["Title"] = "Reports";
+}
+
+
+<div class="row g-4">
+
+
+<div class="col-md-3">
+<div class="card shadow p-4">
+<h6>Total Items</h6>
+<h2>@ViewBag.TotalItems</h2>
+</div>
+</div>
+
+
+<div class="col-md-3">
+<div class="card shadow p-4">
+<h6>Available</h6>
+<h2 class="text-success">
+@ViewBag.Available
+</h2>
+</div>
+</div>
+
+
+<div class="col-md-3">
+<div class="card shadow p-4">
+<h6>Borrowed</h6>
+<h2 class="text-warning">
+@ViewBag.Borrowed
+</h2>
+</div>
+</div>
+
+
+<div class="col-md-3">
+<div class="card shadow p-4">
+<h6>Borrowers</h6>
+<h2>
+@ViewBag.TotalBorrowers
+</h2>
+</div>
+</div>
+
+
+</div>
+
+
+<hr/>
+
+
+<a asp-action="Inventory"
+class="btn btn-primary">
+
+Inventory Report
+
+</a>
+
+
+<a asp-action="Transactions"
+class="btn btn-success">
+
+Transaction Report
+
+</a>
+
+<a asp-action="ArchivedTransactions"
+   class="btn btn-secondary">
+    Archived Transactions
+</a>

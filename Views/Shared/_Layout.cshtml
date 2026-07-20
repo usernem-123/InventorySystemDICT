@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>@ViewData["Title"] - Inventory System</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+
+    <style>
+
+        body{
+            background:#f4f6f9;
+            overflow-x:hidden;
+        }
+
+        .sidebar{
+            position:fixed;
+            left:0;
+            top:0;
+            width:260px;
+            height:100vh;
+            background:#212529;
+            color:white;
+        }
+
+        .sidebar-header{
+            padding:25px;
+            font-size:24px;
+            font-weight:bold;
+            border-bottom:1px solid rgba(255,255,255,.15);
+        }
+
+        .sidebar a{
+
+            display:block;
+            padding:16px 25px;
+
+            color:#ddd;
+
+            text-decoration:none;
+
+            transition:.2s;
+        }
+
+        .sidebar a:hover{
+
+            background:#343a40;
+
+            color:white;
+
+        }
+
+        .sidebar i{
+
+            width:25px;
+
+        }
+
+        .content{
+
+            margin-left:260px;
+
+            padding:30px;
+
+        }
+
+        .topbar{
+
+            background:white;
+
+            border-radius:15px;
+
+            padding:18px 25px;
+
+            margin-bottom:30px;
+
+            display:flex;
+
+            justify-content:space-between;
+
+            align-items:center;
+
+            box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <div class="sidebar-header">
+
+        Inventory
+
+    </div>
+
+    <a asp-controller="Dashboard" asp-action="Index">
+
+        <i class="fa-solid fa-chart-line"></i>
+
+        Dashboard
+
+    </a>
+
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-controller="Users" asp-action="Index">
+
+            <i class="fa-solid fa-users"></i>
+
+            Users
+
+        </a>
+    }
+
+    <a asp-controller="Inventory" asp-action="Index">
+
+        <i class="fa-solid fa-box"></i>
+
+        Inventory
+
+    </a>
+
+    <a asp-controller="Transactions" asp-action="Index">
+
+        <i class="fa-solid fa-hand-holding"></i>
+
+        Transactions
+
+    </a>
+
+    <a asp-controller="Borrowers" asp-action="Index">
+
+        <i class="fa-solid fa-user"></i>
+
+        Borrowers
+
+    </a>
+
+    <a asp-controller="Transactions" asp-action="Return">
+
+        <i class="fa-solid fa-arrow-rotate-left"></i>
+
+        Return
+
+    </a>
+
+    <a asp-controller="Transactions" asp-action="Receive">
+
+        <i class="fa-solid fa-truck-ramp-box"></i>
+
+        Receive
+
+    </a>
+
+    <a asp-controller="Defects" asp-action="Index">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        Defects
+    </a>
+
+    <a asp-controller="Categories" asp-action="Index">
+
+        <i class="fa-solid fa-layer-group"></i>
+
+        Categories
+
+    </a>
+
+    <a asp-controller="Reports" asp-action="Index">
+
+        <i class="fa-solid fa-chart-column"></i>
+
+        Reports
+
+    </a>
+
+    <a asp-controller="Account" asp-action="Logout">
+
+        <i class="fa-solid fa-right-from-bracket"></i>
+
+        Logout
+
+    </a>
+
+</div>
+
+<div class="content">
+
+    <div class="topbar">
+
+        <h4 class="mb-0">
+
+            @ViewData["Title"]
+
+        </h4>
+
+        <div>
+
+            Welcome,
+
+            <strong>@User.Identity?.Name</strong>
+
+        </div>
+
+    </div>
+
+    @RenderBody()
+
+</div>
+
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+@await RenderSectionAsync("Scripts", required:false)
+
+</body>
+</html>

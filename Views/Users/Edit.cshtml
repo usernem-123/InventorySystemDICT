@@ -1,0 +1,43 @@
+@model InventorySystem.Models.ViewModels.UserFormViewModel
+
+<h3>Edit User</h3>
+
+<form asp-action="Edit">
+
+<div asp-validation-summary="ModelOnly"></div>
+
+<div class="mb-3">
+<input asp-for="Id" type="hidden"/>
+<label>Full Name</label>
+<input asp-for="FullName" class="form-control"/>
+</div>
+
+<div class="mb-3">
+<label>Username</label>
+<input asp-for="Username" class="form-control"/>
+</div>
+
+<div class="mb-3">
+<label>Password</label>
+<input asp-for="Password" class="form-control"/>
+</div>
+
+<div class="mb-3">
+<label>Role</label>
+<select asp-for="Role" class="form-select">
+<option>Admin</option>
+<option>Staff</option>
+</select>
+</div>
+
+<button class="btn btn-success">
+Save
+</button>
+
+<a asp-action="Index" class="btn btn-secondary">
+Cancel
+</a>
+
+</form>
+
+<partial name="_ValidationScriptsPartial"/>

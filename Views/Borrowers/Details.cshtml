@@ -1,0 +1,82 @@
+@model InventorySystem.Models.Borrower
+
+@{
+    ViewData["Title"] = "Borrower Details";
+}
+
+<div class="card shadow">
+
+<div class="card-header bg-info text-white">
+
+<h4>@Model.FullName</h4>
+
+</div>
+
+<div class="card-body">
+
+<p><strong>Department:</strong> @Model.Department</p>
+
+<p><strong>Position:</strong> @Model.Position</p>
+
+<p><strong>Contact:</strong> @Model.ContactNumber</p>
+
+<p><strong>Email:</strong> @Model.Email</p>
+
+<hr/>
+
+<h5>Borrower History</h5>
+
+@if(Model.Transactions.Any())
+{
+<table class="table table-bordered">
+
+<thead>
+
+<tr>
+
+<th>Date</th>
+<th>Item</th>
+<th>Type</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+@foreach(var t in Model.Transactions.OrderByDescending(x=>x.TransactionDate))
+{
+<tr>
+
+<td>@t.TransactionDate.ToString("MMM dd, yyyy")</td>
+
+<td>@t.Item?.ItemName</td>
+
+<td>@t.TransactionType</td>
+
+</tr>
+}
+
+</tbody>
+
+</table>
+}
+else
+{
+<div class="alert alert-info">
+
+No transactions found.
+
+</div>
+}
+
+<a asp-action="Index"
+class="btn btn-secondary">
+
+Back
+
+</a>
+
+</div>
+
+</div>

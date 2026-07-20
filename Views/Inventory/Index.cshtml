@@ -1,0 +1,205 @@
+@model InventorySystem.Models.ViewModels.InventoryIndexViewModel
+@using InventorySystem.Models
+
+@{
+    ViewData["Title"] = "Inventory";
+}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h2 class="fw-bold">
+            Inventory
+        </h2>
+
+        <a asp-action="Create"
+           class="btn btn-primary">
+
+            <i class="fa-solid fa-plus"></i>
+            Add Item
+
+        </a>
+
+    </div>
+
+
+    <div class="card shadow border-0 mb-4">
+
+        <div class="card-body">
+
+            <form method="get">
+
+                <div class="row">
+
+                    <div class="col-md-5">
+
+                        <input name="search"
+                               value="@Model.Search"
+                               class="form-control"
+                               placeholder="Search item..." />
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <select name="categoryId"
+                                class="form-select">
+
+                            <option value="">
+                                All Categories
+                            </option>
+
+                            @foreach (var c in Model.Categories)
+                            {
+                                <option value="@c.Value"
+                                        selected="@(c.Value == Model.CategoryId?.ToString())">
+                                    @c.Text
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <button class="btn btn-dark w-100">
+
+                            <i class="fa-solid fa-filter"></i>
+                            Filter
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <div class="card shadow border-0">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover mb-0">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>Code</th>
+                        <th>Item</th>
+                        <th>Category</th>
+                        <th>Serial Number</th>
+                        <th>Location</th>
+                        <th class="text-center">Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                @if (Model.Items.Any())
+                {
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+
+                            <td>
+                                @item.ItemCode
+                            </td>
+
+                            <td>
+                                @item.ItemName
+                            </td>
+
+                            <td>
+                                @item.Category?.Name
+                            </td>
+
+                            <td>
+                                @item.SerialNumber
+                            </td>
+
+                            <td>
+                                @item.Location
+                            </td>
+
+                            <td class="text-nowrap text-center">
+
+                                <a asp-action="Details"
+                                   asp-route-id="@item.Id"
+                                   class="btn btn-info btn-sm"
+                                   title="View">
+
+                                    <i class="fa fa-eye"></i>
+
+                                </a>
+
+                                <a asp-action="Edit"
+                                   asp-route-id="@item.Id"
+                                   class="btn btn-warning btn-sm"
+                                   title="Edit">
+
+                                    <i class="fa fa-edit"></i>
+
+                                </a>
+
+                                @if (item.Status == ItemStatus.Available)
+                                {
+                                    <form asp-controller="Defects"
+                                          asp-action="MarkDefective"
+                                          method="post"
+                                          class="d-inline">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@item.Id" />
+
+                                        <button type="submit"
+                                                class="btn btn-danger btn-sm"
+                                                title="Mark as Defective"
+                                                onclick="return confirm('Mark this item as defective?');">
+
+                                            <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                        </button>
+
+                                    </form>
+                                }
+
+                            </td>
+
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+
+                        <td colspan="6" class="text-center py-4 text-muted">
+
+                            No inventory items found.
+
+                        </td>
+
+                    </tr>
+                }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
