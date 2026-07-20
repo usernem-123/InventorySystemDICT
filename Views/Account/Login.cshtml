@@ -236,9 +236,8 @@ transform:translateY(-15px);
 
 .lock{
 
-    width:65px;
-
-    height:65px;
+    width:85px;
+    height:85px;
 
     margin:auto;
 
@@ -247,14 +246,19 @@ transform:translateY(-15px);
     background:#F3E7D9;
 
     display:flex;
-
     justify-content:center;
-
     align-items:center;
 
-    color:#B56A2E;
+    padding:12px;
 
-    font-size:28px;
+}
+
+.lock img{
+
+    width:100%;
+    height:100%;
+
+    object-fit:contain;
 
 }
 
@@ -322,6 +326,28 @@ transform:translateY(-15px);
 
 }
 
+.dict-logo{
+
+    width:120px;
+    height:120px;
+
+    margin:0 auto 25px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+}
+
+.dict-logo img{
+
+    width:100%;
+    height:100%;
+
+    object-fit:contain;
+
+}
+
 </style>
 
 </head>
@@ -371,9 +397,15 @@ Let's keep your inventory organized and under control.
 
 <div class="card-login">
 
-<div class="lock">
 
-<i class="fa-solid fa-lock"></i>
+
+<div class="card-login">
+
+<div class="dict-logo">
+
+    <img src="~/images/dictlogo.png"
+         asp-append-version="true"
+         alt="DICT Logo">
 
 </div>
 

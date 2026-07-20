@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "pJsxFMK8Jf4=",
+  "dgSpecHash": "rSalsKFewl4=",
   "success": true,
   "projectFilePath": "C:\\OJT\\Inventory\\InventorySystem\\InventorySystem.csproj",
   "expectedPackageFiles": [
@@ -43,10 +43,7 @@
     "C:\\Users\\Administrator\\.nuget\\packages\\system.composition.hosting\\9.0.0\\system.composition.hosting.9.0.0.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\system.composition.runtime\\9.0.0\\system.composition.runtime.9.0.0.nupkg.sha512",
     "C:\\Users\\Administrator\\.nuget\\packages\\system.composition.typedparts\\9.0.0\\system.composition.typedparts.9.0.0.nupkg.sha512",
-    "C:\\Users\\Administrator\\.nuget\\packages\\system.io.packaging\\8.0.1\\system.io.packaging.8.0.1.nupkg.sha512",
-    "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\10.0.9\\microsoft.netcore.app.runtime.win-x64.10.0.9.nupkg.sha512",
-    "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\10.0.9\\microsoft.windowsdesktop.app.runtime.win-x64.10.0.9.nupkg.sha512",
-    "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\10.0.9\\microsoft.aspnetcore.app.runtime.win-x64.10.0.9.nupkg.sha512"
+    "C:\\Users\\Administrator\\.nuget\\packages\\system.io.packaging\\8.0.1\\system.io.packaging.8.0.1.nupkg.sha512"
   ],
   "logs": [
     {
@@ -70,8 +67,7 @@
       "filePath": "C:\\OJT\\Inventory\\InventorySystem\\InventorySystem.csproj",
       "libraryId": "SQLitePCLRaw.lib.e_sqlite3",
       "targetGraphs": [
-        "net10.0",
-        "net10.0/win-x64"
+        "net10.0"
       ]
     }
   ]

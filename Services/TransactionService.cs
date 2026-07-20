@@ -17,13 +17,14 @@ public class TransactionService : ITransactionService
 
     private async Task<string> GenerateItemCodeAsync()
     {
-        var lastItem = await _db.Items
-            .OrderByDescending(i => i.Id)
-            .FirstOrDefaultAsync();
+        var code = $"ITM-{DateTime.Now:yyyyMMddHHmmssffff}";
 
-        var nextId = lastItem == null ? 1 : lastItem.Id + 1;
+        while(await _db.Items.AnyAsync(x => x.ItemCode == code))
+        {
+            code = $"ITM-{DateTime.Now:yyyyMMddHHmmssffff}-{Guid.NewGuid().ToString()[..4].ToUpper()}";
+        }
 
-        return $"ITM-{nextId:D6}";
+        return code;
     }
 
 
