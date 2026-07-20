@@ -1,6 +1,12 @@
 C:\OJT\Inventory\InventorySystem\bin\Release\net10.0\win-x64\publish\InventorySystem.exe
+C:\OJT\Inventory\InventorySystem\bin\Release\net10.0\win-x64\publish\publish\web.config
 C:\OJT\Inventory\InventorySystem\bin\Release\net10.0\win-x64\publish\appsettings.Development.json
 C:\OJT\Inventory\InventorySystem\bin\Release\net10.0\win-x64\publish\appsettings.json
+C:\OJT\Inventory\InventorySystem\bin\Release\net10.0\win-x64\publish\publish\appsettings.Development.json
+C:\OJT\Inventory\InventorySystem\bin\Release\net10.0\win-x64\publish\publish\appsettings.json
+C:\OJT\Inventory\InventorySystem\bin\Release\net10.0\win-x64\publish\publish\InventorySystem.deps.json
+C:\OJT\Inventory\InventorySystem\bin\Release\net10.0\win-x64\publish\publish\InventorySystem.runtimeconfig.json
+C:\OJT\Inventory\InventorySystem\bin\Release\net10.0\win-x64\publish\publish\InventorySystem.staticwebassets.endpoints.json
 C:\OJT\Inventory\InventorySystem\bin\Release\net10.0\win-x64\publish\InventorySystem.dll
 C:\OJT\Inventory\InventorySystem\bin\Release\net10.0\win-x64\publish\InventorySystem.runtimeconfig.json
 C:\OJT\Inventory\InventorySystem\bin\Release\net10.0\win-x64\publish\InventorySystem.pdb

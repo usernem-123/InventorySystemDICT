@@ -525,3 +525,9 @@ C:\OJT\Inventory\InventorySystem\obj\Release\net10.0\win-x64\InventorySystem.pdb
 C:\OJT\Inventory\InventorySystem\obj\Release\net10.0\win-x64\InventorySystem.genruntimeconfig.cache
 C:\OJT\Inventory\InventorySystem\obj\Release\net10.0\win-x64\ref\InventorySystem.dll
 C:\OJT\Inventory\InventorySystem\obj\Release\net10.0\win-x64\InventorySystem.sourcelink.json
+C:\OJT\Inventory\InventorySystem\bin\Release\net10.0\win-x64\publish\appsettings.Development.json
+C:\OJT\Inventory\InventorySystem\bin\Release\net10.0\win-x64\publish\appsettings.json
+C:\OJT\Inventory\InventorySystem\bin\Release\net10.0\win-x64\publish\web.config
+C:\OJT\Inventory\InventorySystem\bin\Release\net10.0\win-x64\publish\InventorySystem.deps.json
+C:\OJT\Inventory\InventorySystem\bin\Release\net10.0\win-x64\publish\InventorySystem.runtimeconfig.json
+C:\OJT\Inventory\InventorySystem\bin\Release\net10.0\win-x64\publish\InventorySystem.staticwebassets.endpoints.json
