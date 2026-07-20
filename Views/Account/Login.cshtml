@@ -10,7 +10,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Inventory Owl</title>
+<title>eShelf</title>
 
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
 <link rel="stylesheet"
@@ -29,7 +29,7 @@ body{
 
     height:100vh;
 
-    background:#F6F1EB;
+    background:#EEF6FF;
 
     overflow:hidden;
 
@@ -46,42 +46,42 @@ body{
 /* LEFT */
 
 .left{
-
     width:50%;
-
     position:relative;
-
     display:flex;
-
     justify-content:center;
-
     align-items:center;
-
     flex-direction:column;
-
-    background:
-    radial-gradient(circle at top left,#fff,#f7ebdc);
+    overflow:hidden;
+    background:#EEF6FF;
 
 }
 
 .left::after{
-
     content:"";
-
     position:absolute;
-
-    right:-180px;
-
     top:0;
+    right:-140px;
 
-    width:500px;
-
+    width:300px;
     height:100%;
 
-    background:white;
+    background:#fff;
+    border-radius:30%;
+    z-index:1;
+}
 
-    border-radius:50%;
+.left::before{
+    content:"";
+    position:absolute;
+    inset:0;
 
+
+    background-size:150% auto;
+
+    opacity:.12;
+
+    z-index:0;
 }
 
 /* TITLE */
@@ -97,31 +97,20 @@ body{
 }
 
 .brand h5{
-
-    color:#C86E20;
-
+    color:#3B82F6;
     font-size:30px;
-
     font-family:cursive;
-
 }
 
 .brand h1{
-
     font-size:64px;
-
     font-weight:700;
-
-    color:#4D311C;
-
+    color:#1E3A8A;
 }
 
 .brand p{
-
-    color:#666;
-
+    color:#64748B;
     margin-top:10px;
-
 }
 
 /* OWL */
@@ -153,54 +142,15 @@ transform:translateY(-15px);
 /* CHAT */
 
 .chat{
-
     z-index:2;
-
     background:white;
-
     margin-top:25px;
-
     padding:18px;
-
     border-radius:18px;
-
-    box-shadow:0 15px 40px rgba(0,0,0,.08);
-
+    box-shadow:0 15px 40px rgba(59,130,246,.12);
     text-align:center;
-
 }
 
-/* ICONS */
-
-.floating{
-
-    position:absolute;
-
-    width:70px;
-
-    height:70px;
-
-    background:white;
-
-    border-radius:18px;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    box-shadow:0 10px 30px rgba(0,0,0,.08);
-
-    font-size:28px;
-
-    color:#B56A2E;
-
-}
-
-.box{top:180px;left:120px;}
-.chart{top:330px;right:120px;}
-.clip{top:220px;right:70px;}
 
 /* RIGHT */
 
@@ -221,36 +171,23 @@ transform:translateY(-15px);
 /* LOGIN CARD */
 
 .card-login{
-
     width:500px;
-
     background:white;
-
     border-radius:30px;
-
     padding:50px;
-
-    box-shadow:0 20px 60px rgba(0,0,0,.08);
-
+    box-shadow:0 20px 60px rgba(59,130,246,.15);
 }
 
 .lock{
-
     width:85px;
     height:85px;
-
     margin:auto;
-
     border-radius:50%;
-
-    background:#F3E7D9;
-
+    background:#DCEEFF;
     display:flex;
     justify-content:center;
     align-items:center;
-
     padding:12px;
-
 }
 
 .lock img{
@@ -263,67 +200,49 @@ transform:translateY(-15px);
 }
 
 .card-login h2{
-
     margin-top:20px;
-
     text-align:center;
-
     font-size:42px;
-
     font-weight:700;
-
+    color:#1E3A8A;
 }
 
 .subtitle{
-
     text-align:center;
-
-    color:#777;
-
+    color:#64748B;
     margin-bottom:35px;
-
 }
 
 .form-control{
-
     height:55px;
-
     border-radius:12px;
+    border:1px solid #BFDBFE;
+}
 
+.form-control:focus{
+    border-color:#3B82F6;
+    box-shadow:0 0 0 .25rem rgba(59,130,246,.18);
 }
 
 .btn-login{
-
     height:55px;
-
     border-radius:12px;
-
-    background:#B56A2E;
-
+    background:#3B82F6;
     border:none;
-
     color:white;
-
     font-weight:600;
-
+    transition:.2s;
 }
 
 .btn-login:hover{
-
-    background:#9b5c2a;
-
+    background:#2563EB;
 }
 
 .footer{
-
     margin-top:25px;
-
     text-align:center;
-
-    color:#888;
-
+    color:#64748B;
     font-size:14px;
-
 }
 
 .dict-logo{
@@ -359,25 +278,18 @@ transform:translateY(-15px);
 <div class="left">
 
 
-<div class="floating chart">
-<i class="fa-solid fa-chart-column"></i>
-</div>
-
-<div class="floating clip">
-<i class="fa-solid fa-clipboard-check"></i>
-</div>
 
 <div class="brand">
 
 <h5>Welcome to</h5>
 
-<h1>Inventory Owl</h1>
+<h1>eShelf</h1>
 
 <p>Smart Inventory. Clear Insights. Better Management.</p>
 
 </div>
 
-<img src="~/images/owl.webp"
+<img src="~/images/tbl.png"
 class="owl"
 asp-append-version="true"/>
 
@@ -396,8 +308,6 @@ Let's keep your inventory organized and under control.
 <div class="right">
 
 <div class="card-login">
-
-
 
 <div class="card-login">
 
