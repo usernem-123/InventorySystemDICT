@@ -97,6 +97,7 @@
                         <th>Category</th>
                         <th>Serial Number</th>
                         <th>Location</th>
+                        <th>Times Borrowed</th>
                         <th class="text-center">Actions</th>
 
                     </tr>
@@ -129,6 +130,10 @@
 
                             <td>
                                 @item.Location
+                            </td>
+
+                            <td>
+                                @item.Transactions?.Count(t => t.TransactionType == TransactionType.Borrow)
                             </td>
 
                             <td class="text-nowrap text-center">

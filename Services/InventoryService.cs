@@ -83,6 +83,7 @@ public class InventoryService : IInventoryService
     {
         return await _db.Items
             .Include(i => i.Category)
+            .Include(i => i.Transactions)
             .OrderBy(i => i.ItemName)
             .ToListAsync();
     }

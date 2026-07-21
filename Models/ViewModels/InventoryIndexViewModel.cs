@@ -11,4 +11,6 @@ public class InventoryIndexViewModel
     public string? Search { get; set; }
 
     public int? CategoryId { get; set; }
+
+    public int? BorrowCount {get; set;}
 }

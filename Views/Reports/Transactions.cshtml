@@ -3,41 +3,84 @@
 <form method="get" class="row g-3 mb-4">
 
     <div class="col-md-3">
-        <label>
-            Start Date
+
+        <label class="form-label">
+            Filter By
         </label>
 
-        <input type="date"
-               name="startDate"
-               value="@ViewBag.StartDate"
-               class="form-control"/>
+        <select id="filterType"
+                name="filterType"
+                class="form-select">
+
+            <option value="Item"
+                    selected="@(ViewBag.FilterType?.ToString() != "Borrower")">
+                Item
+            </option>
+
+            <option value="Borrower"
+                    selected="@(ViewBag.FilterType?.ToString() == "Borrower")">
+                Borrower
+            </option>
+
+        </select>
+
     </div>
 
+    <div class="col-md-4"
+         id="itemFilter">
 
-    <div class="col-md-3">
-        <label>
-            End Date
+        <label class="form-label">
+            Item
         </label>
 
-        <input type="date"
-               name="endDate"
-               value="@ViewBag.EndDate"
-               class="form-control"/>
+        <select name="itemId"
+                class="form-select">
+
+            <option value="">
+                All Items
+            </option>
+
+            @foreach (var item in ViewBag.Items)
+            {
+                <option value="@item.Id"
+                        selected="@(ViewBag.ItemId?.ToString() == item.Id.ToString())">
+
+                    @item.ItemName (@item.ItemCode)
+
+                </option>
+            }
+
+        </select>
+
     </div>
 
+    <div class="col-md-4"
+         id="borrowerFilter">
 
-    <div class="col-md-4">
-        <label>
-            Search
+        <label class="form-label">
+            Borrower
         </label>
 
-        <input type="text"
-               name="search"
-               value="@ViewBag.Search"
-               placeholder="Item or borrower"
-               class="form-control"/>
-    </div>
+        <select name="borrowerId"
+                class="form-select">
 
+            <option value="">
+                All Borrowers
+            </option>
+
+            @foreach (var borrower in ViewBag.Borrowers)
+            {
+                <option value="@borrower.Id"
+                        selected="@(ViewBag.BorrowerId?.ToString() == borrower.Id.ToString())">
+
+                    @borrower.FullName
+
+                </option>
+            }
+
+        </select>
+
+    </div>
 
     <div class="col-md-2 d-flex align-items-end">
 
@@ -48,6 +91,30 @@
     </div>
 
 </form>
+
+@section Scripts
+{
+<script>
+
+function updateFilters(){
+
+    const type = document.getElementById("filterType").value;
+
+    document.getElementById("itemFilter").style.display =
+        type === "Item" ? "block" : "none";
+
+    document.getElementById("borrowerFilter").style.display =
+        type === "Borrower" ? "block" : "none";
+}
+
+document.getElementById("filterType")
+    .addEventListener("change", updateFilters);
+
+updateFilters();
+
+</script>
+}
+
 
 
 <div class="mb-3">

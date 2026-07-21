@@ -43,6 +43,10 @@ public class ReportsController : Controller
         ViewBag.Borrowed = borrowed;
         ViewBag.TotalBorrowers = totalBorrowers;
 
+        ViewBag.Borrowers = await _db.Borrowers
+        .OrderBy(x => x.FullName)
+        .ToListAsync();
+
 
         return View();
     }
@@ -78,56 +82,49 @@ public class ReportsController : Controller
 
 
     public async Task<IActionResult> Transactions(
-        DateTime? startDate,
-        DateTime? endDate,
-        string? search)
+        string? filterType,
+        int? itemId,
+        int? borrowerId)
     {
-
-
         var query = _db.Transactions
             .Include(x => x.Item)
             .Include(x => x.Borrower)
-            .Include(x=>x.User)
+            .Include(x => x.User)
             .AsQueryable();
 
-
-        if(startDate.HasValue)
+        if (filterType == "Item" && itemId.HasValue)
         {
-            query = query.Where(x =>
-                x.TransactionDate >= startDate.Value);
+            query = query.Where(x => x.ItemId == itemId.Value);
         }
 
-
-        if(endDate.HasValue)
+        if (filterType == "Borrower" && borrowerId.HasValue)
         {
-            query = query.Where(x =>
-                x.TransactionDate <= endDate.Value);
+            query = query.Where(x => x.BorrowerId == borrowerId.Value);
         }
-
-
-        if(!string.IsNullOrWhiteSpace(search))
-        {
-            query = query.Where(x =>
-                x.Item!.ItemName.Contains(search) ||
-                (x.Borrower != null &&
-                x.Borrower.FullName.Contains(search)));
-        }
-
 
         var transactions = await query
             .OrderByDescending(x => x.TransactionDate)
             .ToListAsync();
 
+        ViewBag.FilterType = filterType ?? "Item";
+        ViewBag.ItemId = itemId;
+        ViewBag.BorrowerId = borrowerId;
 
-        ViewBag.StartDate = startDate?.ToString("yyyy-MM-dd");
-        ViewBag.EndDate = endDate?.ToString("yyyy-MM-dd");
-        ViewBag.Search = search;
+        ViewBag.Items = await _db.Items
+            .OrderBy(x => x.ItemName)
+            .ToListAsync();
 
+        ViewBag.Borrowers = await _db.Borrowers
+            .OrderBy(x => x.FullName)
+            .ToListAsync();
 
         return View(transactions);
     }
 
-    public async Task<IActionResult> ExportTransactions()
+    public async Task<IActionResult> ExportTransactions(
+        string? filterType,
+        string? action,
+        int? borrowerId)
     {
         var data = await _db.Transactions
             .Include(x=>x.Item)
