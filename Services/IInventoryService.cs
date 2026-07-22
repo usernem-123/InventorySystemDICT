@@ -26,4 +26,10 @@ public interface IInventoryService
     Task<string> GenerateItemCodeAsync();
 
     Task<bool> CanDeleteAsync(int id);
+
+    Task<(List<Item> Items, int TotalCount)> GetPagedItemsAsync(
+    string? search,
+    int? categoryId,
+    int page,
+    int pageSize);
 }

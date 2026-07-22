@@ -22,39 +22,30 @@ public class InventoryController : Controller
         _categoryService = categoryService;
     }
 
-    public async Task<IActionResult> Index(string? search, int? categoryId)
+    public async Task<IActionResult> Index(
+        string? search,
+        int? categoryId,
+        int page = 1)
     {
-        var items = (await _inventoryService.GetAllItemsAsync())
-            .Where(x => x.Status == ItemStatus.Available)
-            .Where(x =>
-                x.Status != ItemStatus.Borrowed &&
-                x.Status != ItemStatus.Defective)
-            .ToList();
+        const int pageSize = 10;
 
-
-        if (!string.IsNullOrWhiteSpace(search))
-        {
-            items = items.Where(x =>
-                x.ItemName.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                x.ItemCode.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                x.SerialNumber.Contains(search, StringComparison.OrdinalIgnoreCase))
-                .ToList();
-        }
-
-
-        if (categoryId.HasValue)
-        {
-            items = items
-                .Where(x => x.CategoryId == categoryId)
-                .ToList();
-        }
+        var result = await _inventoryService.GetPagedItemsAsync(
+            search,
+            categoryId,
+            page,
+            pageSize);
 
 
         var vm = new InventoryIndexViewModel
         {
-            Items = items,
+            Items = result.Items,
             Search = search,
             CategoryId = categoryId,
+            CurrentPage = page,
+            PageSize = pageSize,
+            TotalItems = result.TotalCount,
+            TotalPages = (int)Math.Ceiling(result.TotalCount / (double)pageSize),
+
             Categories = (await _categoryService.GetAllAsync())
                 .Select(c => new SelectListItem
                 {
@@ -63,7 +54,6 @@ public class InventoryController : Controller
                 })
                 .ToList()
         };
-
 
         return View(vm);
     }

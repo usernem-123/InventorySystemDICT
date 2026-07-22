@@ -165,4 +165,43 @@ public class InventoryService : IInventoryService
 
         return code;
     }
+
+    public async Task<(List<Item> Items, int TotalCount)> GetPagedItemsAsync(
+        string? search,
+        int? categoryId,
+        int page,
+        int pageSize)
+
+        
+    {
+        var query = _db.Items
+            .Include(i => i.Category)
+            .Include(i => i.Transactions)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            query = query.Where(i =>
+                i.ItemName.Contains(search) ||
+                i.ItemCode.Contains(search) ||
+                i.SerialNumber.Contains(search));
+        }
+
+        if (categoryId.HasValue)
+        {
+            query = query.Where(i => i.CategoryId == categoryId);
+        }
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderBy(i => i.ItemName)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return (items, totalCount);
+    }
+
+    
 }
