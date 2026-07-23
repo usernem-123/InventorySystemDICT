@@ -84,10 +84,26 @@ public class InventoryController : Controller
             SerialNumber = vm.SerialNumber
         };
 
-        await _inventoryService.CreateItemAsync(item);
-        Console.WriteLine($"Serial: {vm.SerialNumber}");
+        try
+        {
+            await _inventoryService.CreateItemAsync(item);
+            TempData["Success"] = "Item created successfully";
+            return RedirectToAction(nameof(Index));
+        }
+        catch(InvalidOperationException ex)
+        {
+            ModelState.AddModelError(nameof(vm.SerialNumber), ex.Message);
 
-        return RedirectToAction(nameof(Index));
+            vm.Categories = (await _categoryService.GetAllAsync())
+                .Select(c => new SelectListItem
+                {
+                   Value = c.Id.ToString(),
+                   Text = c.Name 
+                })
+                .ToList();
+
+                return View(vm);
+        }
     }
 
     public async Task<IActionResult> Edit(int id)
@@ -147,9 +163,26 @@ public class InventoryController : Controller
         item.SerialNumber = vm.SerialNumber;
         item.Location = vm.Location;
 
-        await _inventoryService.UpdateItemAsync(item);
+        try
+        {
+            await _inventoryService.UpdateItemAsync(item);
+            TempData["Success"] = "Item updated successfully";
+            return RedirectToAction(nameof(Index));
+        }
+        catch(InvalidOperationException ex)
+        {
+            ModelState.AddModelError(nameof(vm.SerialNumber), ex.Message);
 
-        return RedirectToAction(nameof(Index));
+            vm.Categories = (await _categoryService.GetAllAsync())
+                .Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Name
+                })
+                .ToList();
+
+            return View(vm);
+        }
     }
 
     public async Task<IActionResult> Details(int id)
