@@ -15,7 +15,7 @@ public class TransactionArchiveService : ITransactionArchiveService
 
     public async Task ArchiveOldTransactions()
     {
-        var limit = DateTime.Now.AddDays(-30);
+        var limit = DateTime.UtcNow.AddDays(-30);
 
         var oldTransactions = await _db.Transactions
             .Include(x => x.Item)
