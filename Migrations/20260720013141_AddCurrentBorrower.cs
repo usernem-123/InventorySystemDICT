@@ -13,7 +13,7 @@ namespace InventorySystem.Migrations
             migrationBuilder.AddColumn<int>(
                 name: "CurrentBorrowerId",
                 table: "Items",
-                type: "integer",
+                type: "INTEGER",
                 nullable: true);
 
             migrationBuilder.CreateIndex(
