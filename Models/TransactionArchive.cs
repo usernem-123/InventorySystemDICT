@@ -24,5 +24,5 @@ public class TransactionArchive
 
     public int UserId { get; set; }
 
-    public DateTime ArchivedDate { get; set; } = DateTime.Now;
+    public DateTime ArchivedDate { get; set; } = DateTime.UtcNow;
 }

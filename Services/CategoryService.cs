@@ -57,7 +57,7 @@ public class CategoryService : ICategoryService
             );
         }
 
-        category.CreatedAt = DateTime.Now;
+        category.CreatedAt = DateTime.UtcNow;
 
         _db.Categories.Add(category);
 

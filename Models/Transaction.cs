@@ -25,7 +25,7 @@ public class Transaction
 
     public string? Remarks { get; set; }
 
-    public DateTime TransactionDate { get; set; } = DateTime.Now;
+    public DateTime TransactionDate { get; set; } = DateTime.UtcNow;
 
     public int UserId { get; set; }
 

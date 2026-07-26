@@ -17,11 +17,11 @@ public class TransactionService : ITransactionService
 
     private async Task<string> GenerateItemCodeAsync()
     {
-        var code = $"ITM-{DateTime.Now:yyyyMMddHHmmssffff}";
+        var code = $"ITM-{DateTime.UtcNow:yyyyMMddHHmmssffff}";
 
         while(await _db.Items.AnyAsync(x => x.ItemCode == code))
         {
-            code = $"ITM-{DateTime.Now:yyyyMMddHHmmssffff}-{Guid.NewGuid().ToString()[..4].ToUpper()}";
+            code = $"ITM-{DateTime.UtcNow:yyyyMMddHHmmssffff}-{Guid.NewGuid().ToString()[..4].ToUpper()}";
         }
 
         return code;
@@ -106,7 +106,7 @@ public class TransactionService : ITransactionService
 
         item.Status = ItemStatus.Borrowed;
         item.CurrentBorrowerId = borrowerId;
-        item.UpdatedAt = DateTime.Now;
+        item.UpdatedAt = DateTime.UtcNow;
 
 
         _db.Transactions.Add(new Transaction
@@ -116,7 +116,7 @@ public class TransactionService : ITransactionService
             Quantity = 1,
             TransactionType = TransactionType.Borrow,
             Remarks = remarks,
-            TransactionDate = DateTime.Now,
+            TransactionDate = DateTime.UtcNow,
             UserId = userId
         });
 
@@ -145,7 +145,7 @@ public class TransactionService : ITransactionService
 
             item.Status = ItemStatus.Available;
             item.CurrentBorrowerId = null;
-            item.UpdatedAt = DateTime.Now;
+            item.UpdatedAt = DateTime.UtcNow;
 
             _db.Transactions.Add(new Transaction
             {
@@ -154,7 +154,7 @@ public class TransactionService : ITransactionService
                 Quantity = 1,
                 TransactionType = TransactionType.Return,
                 Remarks = remarks,
-                TransactionDate = DateTime.Now,
+                TransactionDate = DateTime.UtcNow,
                 UserId = userId
             });
 
@@ -190,8 +190,8 @@ public class TransactionService : ITransactionService
                 Location = template.Location,
                 SerialNumber = vm.SerialNumber,
                 Status = ItemStatus.Available,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             };
         }
         else
@@ -205,8 +205,8 @@ public class TransactionService : ITransactionService
                 Location = vm.Location,
                 SerialNumber = vm.SerialNumber,
                 Status = ItemStatus.Available,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             };
         }
 
@@ -230,7 +230,7 @@ public class TransactionService : ITransactionService
             Quantity = vm.Quantity,
             TransactionType = TransactionType.Receive,
             Remarks = vm.Remarks,
-            TransactionDate = DateTime.Now,
+            TransactionDate = DateTime.UtcNow,
             UserId = userId
         });
 

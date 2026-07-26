@@ -26,7 +26,7 @@ public class InventoryService : IInventoryService
         
 
         item.Status = ItemStatus.Borrowed;
-        item.UpdatedAt = DateTime.Now;
+        item.UpdatedAt = DateTime.UtcNow;
 
         _db.Transactions.Add(new Transaction
         {
@@ -34,7 +34,7 @@ public class InventoryService : IInventoryService
             BorrowerId = borrowerId,
             Quantity = 1,
             TransactionType = TransactionType.Borrow,
-            TransactionDate = DateTime.Now,
+            TransactionDate = DateTime.UtcNow,
             Remarks = remarks,
             UserId = userId
         });
@@ -64,14 +64,14 @@ public class InventoryService : IInventoryService
         if(item == null || item.Status != ItemStatus.Borrowed) return false;
 
         item.Status = ItemStatus.Available;
-        item.UpdatedAt = DateTime.Now;
+        item.UpdatedAt = DateTime.UtcNow;
 
         _db.Transactions.Add(new Transaction {
             ItemId = itemId,
             BorrowerId = borrowerId,
             Quantity = 1,
             TransactionType = TransactionType.Return,
-            TransactionDate = DateTime.Now,
+            TransactionDate = DateTime.UtcNow,
             Remarks = remarks,
             UserId = userId
         });
@@ -99,8 +99,8 @@ public class InventoryService : IInventoryService
     {
         item.ItemCode = await GenerateItemCodeAsync();
         item.Status = ItemStatus.Available;
-        item.CreatedAt = DateTime.Now;
-        item.UpdatedAt = DateTime.Now;
+        item.CreatedAt = DateTime.UtcNow;
+        item.UpdatedAt = DateTime.UtcNow;
 
         if(await _db.Items.AnyAsync(x => x.SerialNumber == item.SerialNumber))
             throw new InvalidOperationException("Serial Number already exists.");
@@ -134,7 +134,7 @@ public class InventoryService : IInventoryService
         existing.SerialNumber = item.SerialNumber;
         existing.CategoryId = item.CategoryId;
         existing.Location = item.Location;
-        existing.UpdatedAt = DateTime.Now;
+        existing.UpdatedAt = DateTime.UtcNow;
 
         await _db.SaveChangesAsync();
     }
@@ -156,11 +156,11 @@ public class InventoryService : IInventoryService
 
     public async Task<string> GenerateItemCodeAsync()
     {
-        var code = $"ITM-{DateTime.Now:yyyyMMddHHmmssffff}";
+        var code = $"ITM-{DateTime.UtcNow:yyyyMMddHHmmssffff}";
 
         while (await _db.Items.AnyAsync(x => x.ItemCode == code))
         {
-            code = $"ITM-{DateTime.Now:yyyyMMddHHmmssffff}-{Guid.NewGuid().ToString()[..4].ToUpper()}";
+            code = $"ITM-{DateTime.UtcNow:yyyyMMddHHmmssffff}-{Guid.NewGuid().ToString()[..4].ToUpper()}";
         }
 
         return code;
@@ -178,6 +178,8 @@ public class InventoryService : IInventoryService
             .Include(i => i.Category)
             .Include(i => i.Transactions)
             .AsQueryable();
+
+        query = query.Where(i => i.Status == ItemStatus.Available);
 
         if (!string.IsNullOrWhiteSpace(search))
         {

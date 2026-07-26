@@ -37,7 +37,7 @@ public class DefectsController : Controller
         if( i == null) return NotFound();
 
         i.Status = ItemStatus.Defective;
-        i.UpdatedAt = DateTime.Now;
+        i.UpdatedAt = DateTime.UtcNow;
 
         await _db.SaveChangesAsync();
 
@@ -55,7 +55,7 @@ public class DefectsController : Controller
         if(i == null) return NotFound();
 
         i.Status = ItemStatus.Available;
-        i.UpdatedAt = DateTime.Now;
+        i.UpdatedAt = DateTime.UtcNow;
 
         await _db.SaveChangesAsync();
 

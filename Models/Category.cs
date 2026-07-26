@@ -10,7 +10,7 @@ public class Category
 
     public int MinimumStock { get; set; }
 
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<Item> Items { get; set; } = new List<Item>();
 }
