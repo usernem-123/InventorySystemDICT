@@ -448,3 +448,5 @@ C:\laragon\www\Inventory\InventorySystemDICT\obj\Debug\net10.0\refint\InventoryS
 C:\laragon\www\Inventory\InventorySystemDICT\obj\Debug\net10.0\InventorySystem.pdb
 C:\laragon\www\Inventory\InventorySystemDICT\obj\Debug\net10.0\InventorySystem.genruntimeconfig.cache
 C:\laragon\www\Inventory\InventorySystemDICT\obj\Debug\net10.0\ref\InventorySystem.dll
+C:\laragon\www\Inventory\InventorySystemDICT\bin\Debug\net10.0\Npgsql.dll
+C:\laragon\www\Inventory\InventorySystemDICT\bin\Debug\net10.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll

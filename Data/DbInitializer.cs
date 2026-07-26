@@ -7,7 +7,6 @@ public static class DbInitializer
 {
     public static void Seed(AppDbContext db)
     {
-        db.Database.EnsureCreated();
 
         if(db.Users.Any()) return;
 
