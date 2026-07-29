@@ -2,7 +2,7 @@ using InventorySystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using InventorySystem.Services;
-
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +28,7 @@ builder.Services.AddScoped<IBorrowerService, BorrowerService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<ITransactionArchiveService, TransactionArchiveService>();
 builder.WebHost.UseUrls("http://0.0.0.0:5103");
+QuestPDF.Settings.License = LicenseType.Community;
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

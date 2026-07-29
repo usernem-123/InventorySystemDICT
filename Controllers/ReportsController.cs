@@ -6,7 +6,9 @@ using InventorySystem.Models;
 using ClosedXML.Excel;
 using InventorySystem.Services;
 namespace InventorySystem.Controllers;
-
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 [Authorize]
 public class ReportsController : Controller
@@ -186,4 +188,209 @@ public class ReportsController : Controller
 
         return View(archives);
     }
+
+    public async Task<IActionResult> TransactionsPdf(
+    string? filterType,
+    int? itemId,
+    int? borrowerId)
+{
+    var query = _db.Transactions
+        .Include(x => x.Item)
+        .Include(x => x.Borrower)
+        .Include(x => x.User)
+        .AsQueryable();
+
+    if (filterType == "Item" && itemId.HasValue)
+        query = query.Where(x => x.ItemId == itemId.Value);
+
+    if (filterType == "Borrower" && borrowerId.HasValue)
+        query = query.Where(x => x.BorrowerId == borrowerId.Value);
+
+    var transactions = await query
+        .OrderByDescending(x => x.TransactionDate)
+        .ToListAsync();
+
+    var pdf = Document.Create(document =>
+    {
+        document.Page(page =>
+        {
+            page.Size(PageSizes.A4.Landscape());
+            page.Margin(25);
+
+            // ===== HEADER =====
+            page.Header().Column(col =>
+            {
+                col.Item().Row(row =>
+                {
+                    // Place your logo at wwwroot/images/dictlogo.png
+                    row.ConstantItem(70).Height(70)
+                        .Image("wwwroot/images/dictlogo.png");
+
+                    row.RelativeItem().Column(c =>
+                    {
+                        c.Item().AlignCenter()
+                            .Text("Department of Information and Communications Technology")
+                            .Bold()
+                            .FontSize(16);
+
+                        c.Item().AlignCenter()
+                            .Text("Inventory Management System")
+                            .FontSize(12);
+
+                        c.Item().AlignCenter()
+                            .Text("Transaction Report")
+                            .Bold()
+                            .FontSize(18);
+                    });
+                });
+
+                col.Item().PaddingTop(10);
+
+                col.Item().Text($"Generated: {DateTime.Now:MMMM dd, yyyy hh:mm tt}");
+
+                col.Item().Text($"Total Transactions: {transactions.Count}");
+
+                if (filterType == "Item")
+                    col.Item().Text("Filter: Item");
+
+                if (filterType == "Borrower")
+                    col.Item().Text("Filter: Borrower");
+
+                col.Item().PaddingBottom(15);
+            });
+
+            // ===== TABLE =====
+            page.Content().Table(table =>
+            {
+                table.ColumnsDefinition(columns =>
+                {
+                    columns.RelativeColumn(2); // Date
+                    columns.RelativeColumn(1); // Action
+                    columns.RelativeColumn(2); // Item
+                    columns.RelativeColumn(2); // Borrower
+                    columns.RelativeColumn(1); // Qty
+                    columns.RelativeColumn(2); // Remarks
+                    columns.RelativeColumn(2); // Processed By
+                });
+
+                table.Header(header =>
+                {
+                    static IContainer HeaderStyle(IContainer c) =>
+                        c.Background("#0F4C81")
+                         .Border(1)
+                         .BorderColor(Colors.Grey.Lighten2)
+                         .Padding(5);
+
+                    header.Cell().Element(HeaderStyle)
+                        .Text("Date").Bold().FontColor(Colors.White);
+
+                    header.Cell().Element(HeaderStyle)
+                        .Text("Action").Bold().FontColor(Colors.White);
+
+                    header.Cell().Element(HeaderStyle)
+                        .Text("Item").Bold().FontColor(Colors.White);
+
+                    header.Cell().Element(HeaderStyle)
+                        .Text("Borrower").Bold().FontColor(Colors.White);
+
+                    header.Cell().Element(HeaderStyle)
+                        .Text("Qty").Bold().FontColor(Colors.White);
+
+                    header.Cell().Element(HeaderStyle)
+                        .Text("Remarks").Bold().FontColor(Colors.White);
+
+                    header.Cell().Element(HeaderStyle)
+                        .Text("Processed By").Bold().FontColor(Colors.White);
+                });
+
+                int index = 0;
+
+                foreach (var t in transactions)
+                {
+                    var rowColor = index % 2 == 0
+                        ? Colors.Grey.Lighten4
+                        : Colors.White;
+
+                    static IContainer CellStyle(IContainer c, string color) =>
+                        c.Background(color)
+                         .Border(1)
+                         .BorderColor(Colors.Grey.Lighten2)
+                         .Padding(5);
+
+                    table.Cell().Element(c => CellStyle(c, rowColor))
+                        .Text(t.TransactionDate.ToString("MMM dd, yyyy"));
+
+                    var actionColor = t.TransactionType switch
+                    {
+                        TransactionType.Borrow => Colors.Orange.Lighten2,
+                        TransactionType.Return => Colors.Green.Lighten2,
+                        TransactionType.Receive => Colors.Blue.Lighten2,
+                        _ => Colors.Grey.Lighten2
+                    };
+
+                    table.Cell().Element(c => CellStyle(c, actionColor))
+                        .AlignCenter()
+                        .Text(t.TransactionType.ToString())
+                        .Bold();
+
+                    table.Cell().Element(c => CellStyle(c, rowColor))
+                        .Text(t.Item?.ItemName ?? "-");
+
+                    table.Cell().Element(c => CellStyle(c, rowColor))
+                        .Text(t.Borrower?.FullName ?? "-");
+
+                    table.Cell().Element(c => CellStyle(c, rowColor))
+                        .AlignCenter()
+                        .Text(t.Quantity.ToString());
+
+                    table.Cell().Element(c => CellStyle(c, rowColor))
+                        .Text(t.Remarks ?? "-");
+
+                    table.Cell().Element(c => CellStyle(c, rowColor))
+                        .Text(t.User?.FullName ?? "-");
+
+                    index++;
+                }
+            });
+
+            // ===== FOOTER =====
+            page.Footer().Column(col =>
+            {
+                col.Item().PaddingTop(20);
+
+                col.Item().Row(row =>
+                {
+                    row.RelativeItem().AlignCenter().Column(c =>
+                    {
+                        c.Item().Text("________________________");
+                        c.Item().Text("Prepared By")
+                            .Bold();
+                    });
+
+                    row.RelativeItem().AlignCenter().Column(c =>
+                    {
+                        c.Item().Text("________________________");
+                        c.Item().Text("Approved By")
+                            .Bold();
+                    });
+                });
+
+                col.Item().PaddingTop(15);
+
+                col.Item().AlignCenter().Text(text =>
+                {
+                    text.Span("Page ");
+                    text.CurrentPageNumber();
+                    text.Span(" of ");
+                    text.TotalPages();
+                });
+            });
+        });
+    });
+
+    return File(
+        pdf.GeneratePdf(),
+        "application/pdf",
+        $"TransactionReport_{DateTime.Now:yyyyMMdd_HHmmss}.pdf");
+}
 }

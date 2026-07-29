@@ -36,22 +36,19 @@
 <td>@item.SerialNumber</td>
 
 <td>
-
-@if(item.Status == ItemStatus.Available)
-{
-<span class="badge bg-success">
-Available
-</span>
-}
-else
-{
-<span class="badge bg-warning">
-Borrowed
-</span>
-}
-
+    @if (item.Status == ItemStatus.Available)
+    {
+        <span class="badge bg-success">Available</span>
+    }
+    else if (item.Status == ItemStatus.Borrowed)
+    {
+        <span class="badge bg-warning">Borrowed</span>
+    }
+    else if (item.Status == ItemStatus.Defective)
+    {
+        <span class="badge bg-danger">Defective</span>
+    }
 </td>
-
 
 </tr>
 

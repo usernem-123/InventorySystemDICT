@@ -128,13 +128,14 @@ updateFilters();
     </a>
 
 
-    <button onclick="window.print()"
-            class="btn btn-dark">
-
-        <i class="fa-solid fa-print"></i>
-        Print
-
-    </button>
+    <a asp-action="TransactionsPdf"
+    asp-route-filterType="@ViewBag.FilterType"
+    asp-route-itemId="@ViewBag.ItemId"
+    asp-route-borrowerId="@ViewBag.BorrowerId"
+    class="btn btn-danger">
+        <i class="fa-solid fa-file-pdf"></i>
+        Export PDF
+    </a>
 
 </div>
 
