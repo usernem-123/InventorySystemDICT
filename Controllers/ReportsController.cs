@@ -27,31 +27,59 @@ public class ReportsController : Controller
 
 
     public async Task<IActionResult> Index()
-    {
-        var totalItems = await _db.Items.CountAsync();
-
-        var available = await _db.Items
-            .CountAsync(x => x.Status == ItemStatus.Available);
-
-        var borrowed = await _db.Items
-            .CountAsync(x => x.Status == ItemStatus.Borrowed);
+{
+    var items = await _db.Items
+        .Include(x => x.Category)
+        .ToListAsync();
 
 
-        var totalBorrowers = await _db.Borrowers.CountAsync();
+    // Overall
+    ViewBag.TotalItems = items.Count;
 
 
-        ViewBag.TotalItems = totalItems;
-        ViewBag.Available = available;
-        ViewBag.Borrowed = borrowed;
-        ViewBag.TotalBorrowers = totalBorrowers;
+    // ICT
+    // ICT
+ViewBag.ICTCount = items
+    .Count(x => x.Category != null &&
+                x.Category.Name == "ICT");
 
-        ViewBag.Borrowers = await _db.Borrowers
+
+ViewBag.AvailableICT = items
+    .Count(x => x.Category != null &&
+                x.Category.Name == "ICT" &&
+                x.Status == ItemStatus.Available);
+
+
+ViewBag.BorrowedICT = items
+    .Count(x => x.Category != null &&
+                x.Category.Name == "ICT" &&
+                x.Status == ItemStatus.Borrowed);
+
+
+// Non-ICT Supplies
+ViewBag.NonICTCount = items
+    .Count(x => x.Category != null &&
+                x.Category.Name.StartsWith("Non-ICT"));
+
+
+ViewBag.NonICTQuantity = items
+    .Where(x => x.Category != null &&
+                x.Category.Name.StartsWith("Non-ICT"))
+    .Sum(x => x.Quantity);
+
+
+
+
+    ViewBag.TotalBorrowers = await _db.Borrowers.CountAsync();
+
+
+    ViewBag.Borrowers = await _db.Borrowers
         .OrderBy(x => x.FullName)
         .ToListAsync();
 
 
-        return View();
-    }
+    return View();
+}
 
 
     public async Task<IActionResult> Inventory(
@@ -192,7 +220,9 @@ public class ReportsController : Controller
     public async Task<IActionResult> TransactionsPdf(
     string? filterType,
     int? itemId,
-    int? borrowerId)
+    int? borrowerId,
+    DateTime? startDate,
+    DateTime? endDate)
 {
     var query = _db.Transactions
         .Include(x => x.Item)
@@ -205,6 +235,20 @@ public class ReportsController : Controller
 
     if (filterType == "Borrower" && borrowerId.HasValue)
         query = query.Where(x => x.BorrowerId == borrowerId.Value);
+
+if (startDate.HasValue)
+{
+    var start = DateTime.SpecifyKind(startDate.Value.Date, DateTimeKind.Utc);
+
+    query = query.Where(x => x.TransactionDate >= start);
+}
+
+if (endDate.HasValue)
+{
+    var end = DateTime.SpecifyKind(endDate.Value.Date.AddDays(1).AddTicks(-1), DateTimeKind.Utc);
+
+    query = query.Where(x => x.TransactionDate <= end);
+}
 
     var transactions = await query
         .OrderByDescending(x => x.TransactionDate)
@@ -248,7 +292,14 @@ public class ReportsController : Controller
 
                 col.Item().Text($"Generated: {DateTime.Now:MMMM dd, yyyy hh:mm tt}");
 
-                col.Item().Text($"Total Transactions: {transactions.Count}");
+if (startDate.HasValue || endDate.HasValue)
+{
+    col.Item().Text(
+        $"Period: {(startDate?.ToString("MMMM dd, yyyy") ?? "Beginning")} - {(endDate?.ToString("MMMM dd, yyyy") ?? "Present")}"
+    );
+}
+
+col.Item().Text($"Total Transactions: {transactions.Count}");
 
                 if (filterType == "Item")
                     col.Item().Text("Filter: Item");

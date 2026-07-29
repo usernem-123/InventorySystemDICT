@@ -6,7 +6,8 @@
 
     <div class="card-header bg-success text-white">
         <h4 class="mb-0">
-            Return Items
+            <i class="fa-solid fa-arrow-rotate-left"></i>
+            Return ICT Items
         </h4>
     </div>
 
@@ -34,7 +35,7 @@
                     @foreach (var borrower in ViewBag.Borrowers)
                     {
                         <option value="@borrower.Id">
-                            @borrower.FullName
+                            @borrower.FullName - @borrower.Department
                         </option>
                     }
 
@@ -42,69 +43,47 @@
 
             </div>
 
-            <div class="row">
+            <div class="mb-3">
 
-                <div class="col-md-5">
+                <label class="form-label fw-bold">
+                    Borrowed ICT Assets
+                </label>
 
-                    <label class="form-label fw-bold">
-                        Borrowed Items
-                    </label>
+                <input type="text"
+                       id="searchItems"
+                       class="form-control mb-3"
+                       placeholder="Search item..." />
 
-                    <select id="availableItems"
-                            class="form-select"
-                            size="12"
-                            multiple
-                            disabled>
+                <small class="text-muted">
+                    Select a borrower, then click items to mark them for return.
+                </small>
 
-                        <option>
-                            Select a borrower first
-                        </option>
+            </div>
 
-                    </select>
+            <div id="itemsContainer"
+                 class="row g-3"
+                 style="max-height:450px; overflow-y:auto;">
 
-                </div>
-
-                <div class="col-md-2 d-flex flex-column justify-content-center">
-
-                    <button type="button"
-                            id="btnAdd"
-                            class="btn btn-success mb-2">
-
-                        <i class="fa-solid fa-arrow-right"></i>
-
-                    </button>
-
-                    <button type="button"
-                            id="btnRemove"
-                            class="btn btn-danger">
-
-                        <i class="fa-solid fa-arrow-left"></i>
-
-                    </button>
-
-                </div>
-
-                <div class="col-md-5">
-
-                    <label class="form-label fw-bold">
-                        Return List
-                    </label>
-
-                    <select id="returnItems"
-                            class="form-select"
-                            size="12"
-                            multiple>
-                    </select>
-
+                <div class="col-12 text-center text-muted py-5">
+                    Select a borrower first.
                 </div>
 
             </div>
 
-            <hr class="my-4"/>
+            <div class="mt-3">
+
+                <span class="badge bg-success fs-6">
+                    Selected:
+                    <span id="selectedCount">0</span>
+                </span>
+
+            </div>
+
+            <hr />
 
             <div class="mb-3">
 
-                <label class="form-label">
+                <label class="form-label fw-bold">
                     Remarks
                 </label>
 
@@ -116,19 +95,14 @@
 
             <div id="hiddenItems"></div>
 
-            <button type="submit"
-                    class="btn btn-success">
-
+            <button class="btn btn-success">
                 <i class="fa-solid fa-arrow-rotate-left"></i>
                 Return Selected Items
-
             </button>
 
             <a asp-action="Index"
                class="btn btn-secondary">
-
                 Cancel
-
             </a>
 
         </form>
@@ -141,93 +115,152 @@
 
 <script>
 
-const borrower = document.getElementById("borrowerId");
-const available = document.getElementById("availableItems");
-const selected = document.getElementById("returnItems");
+const borrower=document.getElementById("borrowerId");
+const container=document.getElementById("itemsContainer");
+const search=document.getElementById("searchItems");
+const hidden=document.getElementById("hiddenItems");
+const count=document.getElementById("selectedCount");
 
-borrower.addEventListener("change", async function () {
+const selected=new Set();
 
-    available.innerHTML = "";
-    selected.innerHTML = "";
-    available.disabled = true;
+function updateCount(){
+    count.textContent=selected.size;
+}
 
-    if (this.value === "") {
+borrower.addEventListener("change",async()=>{
 
-        available.innerHTML =
-            "<option>Select a borrower first</option>";
+    container.innerHTML="";
+    selected.clear();
+    updateCount();
 
-        return;
-    }
+    if(!borrower.value){
 
-    const response = await fetch(
-        `/Transactions/GetBorrowedItemsByBorrower?borrowerId=${this.value}`
-    );
-
-    if (!response.ok)
-        return;
-
-    const items = await response.json();
-
-    available.innerHTML = "";
-
-    if (items.length === 0) {
-
-        available.innerHTML =
-            "<option>No borrowed items</option>";
+        container.innerHTML=`
+            <div class="col-12 text-center text-muted py-5">
+                Select a borrower first.
+            </div>`;
 
         return;
     }
 
-    items.forEach(item => {
+    const res=await fetch(`/Transactions/GetBorrowedItemsByBorrower?borrowerId=${borrower.value}`);
 
-        const option = document.createElement("option");
+    const items=await res.json();
 
-        option.value = item.id;
-        option.text = item.text;
+    if(items.length===0){
 
-        available.appendChild(option);
+        container.innerHTML=`
+            <div class="col-12 text-center text-muted py-5">
+                No borrowed ICT items found.
+            </div>`;
+
+        return;
+    }
+
+    items.forEach(item=>{
+
+        container.insertAdjacentHTML("beforeend",`
+
+        <div class="col-md-4 item-container">
+
+            <div class="card item-card shadow-sm h-100"
+                 data-id="${item.id}"
+                 data-search="${item.text.toLowerCase()}"
+                 style="cursor:pointer;transition:.2s;">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+
+                            <h6 class="fw-bold mb-1">
+                                ${item.text}
+                            </h6>
+
+                        </div>
+
+                        <i class="fa-solid fa-circle-check fa-xl text-success check-icon d-none"></i>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `);
 
     });
 
-    available.disabled = false;
+    attachEvents();
 
 });
 
-document.getElementById("btnAdd").onclick = function () {
+function attachEvents(){
 
-    [...available.selectedOptions].forEach(option => {
+    document.querySelectorAll(".item-card").forEach(card=>{
 
-        selected.appendChild(option);
+        card.onclick=function(){
+
+            const id=this.dataset.id;
+
+            const icon=this.querySelector(".check-icon");
+
+            if(selected.has(id)){
+
+                selected.delete(id);
+
+                this.classList.remove("border-success");
+                this.classList.remove("bg-success-subtle");
+
+                icon.classList.add("d-none");
+
+            }else{
+
+                selected.add(id);
+
+                this.classList.add("border-success");
+                this.classList.add("bg-success-subtle");
+
+                icon.classList.remove("d-none");
+
+            }
+
+            updateCount();
+
+        };
 
     });
 
-};
+}
 
-document.getElementById("btnRemove").onclick = function () {
+search.addEventListener("keyup",()=>{
 
-    [...selected.selectedOptions].forEach(option => {
+    const value=search.value.toLowerCase();
 
-        available.appendChild(option);
+    document.querySelectorAll(".item-card").forEach(card=>{
+
+        card.closest(".item-container").style.display=
+            card.dataset.search.includes(value)
+            ? ""
+            : "none";
 
     });
 
-};
+});
 
-document.querySelector("form").addEventListener("submit", function () {
+document.querySelector("form").addEventListener("submit",()=>{
 
-    const hidden = document.getElementById("hiddenItems");
+    hidden.innerHTML="";
 
-    hidden.innerHTML = "";
+    selected.forEach(id=>{
 
-    [...selected.options].forEach(option => {
-
-        const input = document.createElement("input");
-
-        input.type = "hidden";
-        input.name = "itemIds";
-        input.value = option.value;
-
-        hidden.appendChild(input);
+        hidden.insertAdjacentHTML(
+            "beforeend",
+            `<input type="hidden" name="itemIds" value="${id}">`
+        );
 
     });
 

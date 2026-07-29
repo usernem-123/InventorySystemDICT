@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Categories";
+
+    var ictCategories = Model.Where(c => c.Name == "ICT").ToList();
+    var nonIctCategories = Model.Where(c => c.Name != "ICT").ToList();
 }
 
 <div class="container-fluid py-4">
@@ -11,14 +14,6 @@
         <h2 class="fw-bold">
             Categories
         </h2>
-
-        <a asp-action="Create"
-           class="btn btn-primary">
-
-            <i class="fa-solid fa-plus"></i>
-            Add Category
-
-        </a>
 
     </div>
 
@@ -40,141 +35,178 @@
 
         <div class="table-responsive">
 
-            <table class="table table-hover align-middle mb-0">
+            <!-- ICT Categories -->
+<div class="card shadow border-0 mb-4">
 
-                <thead class="table-light">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">ICT Categories</h5>
+    </div>
 
-                    <tr>
+    <div class="table-responsive">
 
-                        <th>Category</th>
-                        <th>Description</th>
-                        <th class="text-center">Available</th>
-                        <th class="text-center">Borrowed</th>
-                        <th class="text-center">Total Assets</th>
-                        <th class="text-center">Minimum</th>
-                        <th class="text-center">Status</th>
-                        <th width="140"></th>
+        <table class="table table-hover align-middle mb-0">
 
-                    </tr>
+            <thead class="table-light">
+                <tr>
+                    <th>Category</th>
+                    <th class="text-center">Available</th>
+                    <th class="text-center">Borrowed</th>
+                    <th class="text-center">Total Assets</th>
+                    <th class="text-center">Minimum</th>
+                    <th class="text-center">Status</th>
+                </tr>
+            </thead>
 
-                </thead>
+            <tbody>
 
-                <tbody>
+            @if(!ictCategories.Any())
+            {
+                <tr>
+                    <td colspan="6" class="text-center text-muted">
+                        No ICT categories found.
+                    </td>
+                </tr>
+            }
 
-                    @if (!Model.Any())
-                    {
-                        <tr>
+            @foreach(var category in ictCategories)
+            {
+                <tr>
 
-                            <td colspan="8" class="text-center text-muted py-4">
+                    <td>
+                        <strong>@category.Name</strong>
+                    </td>
 
-                                No categories found.
+                    <td class="text-center">
+                        <span class="badge bg-success">
+                            @category.AvailableAssets
+                        </span>
+                    </td>
 
-                            </td>
+                    <td class="text-center">
+                        <span class="badge bg-warning text-dark">
+                            @category.BorrowedAssets
+                        </span>
+                    </td>
 
-                        </tr>
-                    }
+                    <td class="text-center">
+                        <span class="badge bg-primary">
+                            @category.TotalAssets
+                        </span>
+                    </td>
 
-                    @foreach (var category in Model)
-                    {
-                        <tr>
+                    <td class="text-center">
+                        @category.MinimumStock
+                    </td>
 
-                            <td>
+                    <td class="text-center">
 
-                                <strong>@category.Name</strong>
+                        @if(category.IsLowStock)
+                        {
+                            <span class="badge bg-danger">
+                                Low Stock
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">
+                                Normal
+                            </span>
+                        }
 
-                            </td>
+                    </td>
 
-                            <td>
+                </tr>
+            }
 
-                                @(string.IsNullOrWhiteSpace(category.Description)
-                                    ? "-"
-                                    : category.Description)
+            </tbody>
 
-                            </td>
+        </table>
 
-                            <td class="text-center">
+    </div>
 
-                                <span class="badge bg-success">
+</div>
 
-                                    @category.AvailableAssets
 
-                                </span>
+<!-- Non ICT Categories -->
+<div class="card shadow border-0">
 
-                            </td>
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0">Non-ICT Supplies</h5>
+    </div>
 
-                            <td class="text-center">
+    <div class="table-responsive">
 
-                                <span class="badge bg-warning text-dark">
+        <table class="table table-hover align-middle mb-0">
 
-                                    @category.BorrowedAssets
+            <thead class="table-light">
 
-                                </span>
+                <tr>
+                    <th>Category</th>
+                    <th class="text-center">Quantity</th>
+                    <th class="text-center">Total Assets</th>
+                    <th class="text-center">Status</th>
+                </tr>
 
-                            </td>
+            </thead>
 
-                            <td class="text-center">
+            <tbody>
 
-                                <span class="badge bg-primary">
+            @if(!nonIctCategories.Any())
+            {
+                <tr>
+                    <td colspan="4" class="text-center text-muted">
+                        No Non-ICT categories found.
+                    </td>
+                </tr>
+            }
 
-                                    @category.TotalAssets
+            @foreach(var category in nonIctCategories)
+            {
+                <tr>
 
-                                </span>
+                    <td>
+                        <strong>@category.Name</strong>
+                    </td>
 
-                            </td>
+                    <td class="text-center">
+                        @category.TotalAssets
+                    </td>
 
-                            <td class="text-center">
+                    <td class="text-center">
 
-                                @category.MinimumStock
+                        <span class="badge bg-primary">
+                            @category.TotalAssets
+                        </span>
 
-                            </td>
+                    </td>
 
-                            <td class="text-center">
+                    <td class="text-center">
 
-                                @if (category.IsLowStock)
-                                {
-                                    <span class="badge bg-danger">
+                        @if(category.IsLowStock)
+                        {
+                            <span class="badge bg-danger">
+                                Low Stock
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">
+                                Normal
+                            </span>
+                        }
 
-                                        Low Stock
+                    </td>
 
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-success">
+                </tr>
+            }
 
-                                        Normal
+            </tbody>
 
-                                    </span>
-                                }
+        </table>
 
-                            </td>
+    </div>
 
-                            <td>
-
-                                <a asp-action="Edit"
-                                   asp-route-id="@category.Id"
-                                   class="btn btn-sm btn-warning">
-
-                                    <i class="fa-solid fa-pen"></i>
-
-                                </a>
-
-                                <a asp-action="Delete"
-                                   asp-route-id="@category.Id"
-                                   class="btn btn-sm btn-danger">
-
-                                    <i class="fa-solid fa-trash"></i>
-
-                                </a>
-
-                            </td>
-
-                        </tr>
-                    }
-
-                </tbody>
-
-            </table>
+</div>
 
         </div>
 

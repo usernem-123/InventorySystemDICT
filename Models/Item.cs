@@ -19,7 +19,10 @@ public class Item
     public Category? Category { get; set; }
 
     [Display(Name = "Serial Number")]
-    public string SerialNumber { get; set; } = "";
+    public string? SerialNumber { get; set; } = "";
+
+    [Display(Name = "Quantity")]
+    public int Quantity {get;set;}
 
     public string? Location { get; set; }
 

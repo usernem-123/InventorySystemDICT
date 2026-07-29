@@ -10,7 +10,8 @@ public class InventoryFormViewModel
     public int CategoryId { get; set; }
     public string? Location { get; set; }
     public string? ItemCode { get; set; }
-    public string SerialNumber { get; set; } = "";
+    public string? SerialNumber { get; set; } = "";
+    public int Quantity { get; set; } = 1;
 
     public List<SelectListItem> Categories { get; set; } = [];
 }

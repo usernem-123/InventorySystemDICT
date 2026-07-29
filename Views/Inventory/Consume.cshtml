@@ -1,0 +1,71 @@
+@model InventorySystem.Models.Item
+
+@{
+    ViewData["Title"] = "Consume Item";
+}
+
+<div class="container py-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">Consume Item</h4>
+        </div>
+
+        <div class="card-body">
+
+            <dl class="row">
+
+                <dt class="col-sm-4">Item</dt>
+                <dd class="col-sm-8">@Model.ItemName</dd>
+
+                <dt class="col-sm-4">Category</dt>
+                <dd class="col-sm-8">@Model.Category?.Name</dd>
+
+                <dt class="col-sm-4">Available Quantity</dt>
+                <dd class="col-sm-8">
+                    <span class="badge bg-primary">@Model.Quantity</span>
+                </dd>
+
+            </dl>
+
+            <form asp-action="Consume" method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       name="id"
+                       value="@Model.Id" />
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Quantity to Consume
+                    </label>
+
+                    <input type="number"
+                           name="quantity"
+                           class="form-control"
+                           min="1"
+                           max="@Model.Quantity"
+                           value="1"
+                           required />
+
+                </div>
+
+                <button class="btn btn-success">
+                    Consume
+                </button>
+
+                <a asp-action="Index"
+                   class="btn btn-secondary">
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

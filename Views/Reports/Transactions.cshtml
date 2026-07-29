@@ -127,17 +127,114 @@ updateFilters();
 
     </a>
 
+    <button type="button"
+            class="btn btn-danger"
+            data-bs-toggle="modal"
+            data-bs-target="#pdfModal">
 
-    <a asp-action="TransactionsPdf"
-    asp-route-filterType="@ViewBag.FilterType"
-    asp-route-itemId="@ViewBag.ItemId"
-    asp-route-borrowerId="@ViewBag.BorrowerId"
-    class="btn btn-danger">
         <i class="fa-solid fa-file-pdf"></i>
         Export PDF
-    </a>
+
+    </button>
 
 </div>
+
+<!-- PDF Export Modal -->
+<div class="modal fade"
+     id="pdfModal"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <form asp-action="TransactionsPdf"
+                  method="get">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+                        Export Transaction Report
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"></button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <input type="hidden"
+                           name="filterType"
+                           value="@ViewBag.FilterType" />
+
+                    <input type="hidden"
+                           name="itemId"
+                           value="@ViewBag.ItemId" />
+
+                    <input type="hidden"
+                           name="borrowerId"
+                           value="@ViewBag.BorrowerId" />
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-bold">
+                            Start Date
+                        </label>
+
+                        <input type="date"
+                               name="startDate"
+                               class="form-control"
+                               required />
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-bold">
+                            End Date
+                        </label>
+
+                        <input type="date"
+                               name="endDate"
+                               class="form-control"
+                               required />
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+
+                        Cancel
+
+                    </button>
+
+                    <button type="submit"
+                            class="btn btn-danger">
+
+                        <i class="fa-solid fa-file-pdf"></i>
+                        Export PDF
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
 
 
 <div class="card shadow border-0">

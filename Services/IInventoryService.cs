@@ -32,4 +32,16 @@ public interface IInventoryService
     int? categoryId,
     int page,
     int pageSize);
+
+    Task<bool> ConsumeItemAsync(
+        int itemId,
+        int quantity,
+        int userId,
+        string? remarks = null);
+
+    Task<bool> CanConsumeAsync(
+        int itemId,
+        int quantity);
+
+    Task ConsumeItemAsync(int itemId, int quantity);
 }

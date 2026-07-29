@@ -3,6 +3,11 @@
 
 @{
     ViewData["Title"] = "Inventory";
+
+    var ictItems = Model.Items.Where(i => i.Category?.Name == "ICT").ToList();
+    var nonIctItems = Model.Items.Where(i => i.Category?.Name != "ICT").ToList();
+    var selectedCategory = Model.Categories
+        .FirstOrDefault(c => c.Value == Model.CategoryId?.ToString())?.Text;
 }
 
 <div class="container-fluid py-4">
@@ -81,131 +86,196 @@
 
     </div>
 
+@if(Model.CategoryId == null || selectedCategory == "ICT")
+{
+    <div class="card shadow border-0 mb-4">
 
-    <div class="card shadow border-0">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">ICT Assets</h5>
+    </div>
 
-        <div class="table-responsive">
+    <div class="table-responsive">
 
-            <table class="table table-hover mb-0">
+        <table class="table table-hover mb-0">
 
-                <thead class="table-light">
+            <thead class="table-light">
+                <tr>
+                    <th>Code</th>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Times Borrowed</th>
+                    <th>Serial Number</th>
+                    <th>Status</th>
+                    <th>Location</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
 
-                    <tr>
+            <tbody>
 
-                        <th>Code</th>
-                        <th>Item</th>
-                        <th>Category</th>
-                        <th>Serial Number</th>
-                        <th>Location</th>
-                        <th>Times Borrowed</th>
-                        <th class="text-center">Actions</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                @if (Model.Items.Any())
-                {
-                    @foreach (var item in Model.Items)
-                    {
-                        <tr>
-
-                            <td>
-                                @item.ItemCode
-                            </td>
-
-                            <td>
-                                @item.ItemName
-                            </td>
-
-                            <td>
-                                @item.Category?.Name
-                            </td>
-
-                            <td>
-                                @item.SerialNumber
-                            </td>
-
-                            <td>
-                                @item.Location
-                            </td>
-
-                            <td>
-                                @item.Transactions?.Count(t => t.TransactionType == TransactionType.Borrow)
-                            </td>
-
-                            <td class="text-nowrap text-center">
-
-                                <a asp-action="Details"
-                                   asp-route-id="@item.Id"
-                                   class="btn btn-info btn-sm"
-                                   title="View">
-
-                                    <i class="fa fa-eye"></i>
-
-                                </a>
-
-                                <a asp-action="Edit"
-                                   asp-route-id="@item.Id"
-                                   class="btn btn-warning btn-sm"
-                                   title="Edit">
-
-                                    <i class="fa fa-edit"></i>
-
-                                </a>
-
-                                @if (item.Status == ItemStatus.Available)
-                                {
-                                    <form asp-controller="Defects"
-                                          asp-action="MarkDefective"
-                                          method="post"
-                                          class="d-inline">
-
-                                        @Html.AntiForgeryToken()
-
-                                        <input type="hidden"
-                                               name="id"
-                                               value="@item.Id" />
-
-                                        <button type="submit"
-                                                class="btn btn-danger btn-sm"
-                                                title="Mark as Defective"
-                                                onclick="return confirm('Mark this item as defective?');">
-
-                                            <i class="fa-solid fa-triangle-exclamation"></i>
-
-                                        </button>
-
-                                    </form>
-                                }
-
-                            </td>
-
-                        </tr>
-                    }
-                }
-                else
+            @if (ictItems.Any())
+            {
+                @foreach (var item in ictItems)
                 {
                     <tr>
+                        <td>@item.ItemCode</td>
+                        <td>@item.ItemName</td>
+                        <td>@item.Category?.Name</td>
+                        <td>
+                            @(item.Transactions?.Count(t => t.TransactionType == TransactionType.Borrow) ?? 0)
+                        </td>
+                        <td>@item.SerialNumber</td>
+                        <td>
+                            @if (item.Status == ItemStatus.Available)
+                            {
+                                <span class="badge bg-success">Available</span>
+                            }
+                            else if (item.Status == ItemStatus.Borrowed)
+                            {
+                                <span class="badge bg-warning text-dark">Borrowed</span>
+                            }
+                            else if (item.Status == ItemStatus.Defective)
+                            {
+                                <span class="badge bg-danger">Defective</span>
+                            }
+                        </td>
 
-                        <td colspan="6" class="text-center py-4 text-muted">
+                        <td>@item.Location</td>
 
-                            No inventory items found.
+                        <td class="text-center">
+
+                            <a asp-action="Details"
+                               asp-route-id="@item.Id"
+                               class="btn btn-info btn-sm">
+                                <i class="fa fa-eye"></i>
+                            </a>
+
+                            <a asp-action="Edit"
+                               asp-route-id="@item.Id"
+                               class="btn btn-warning btn-sm">
+                                <i class="fa fa-edit"></i>
+                            </a>
+
+                            @if (item.Status == ItemStatus.Available)
+                            {
+                                <form asp-controller="Defects"
+                                      asp-action="MarkDefective"
+                                      method="post"
+                                      class="d-inline">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden" name="id" value="@item.Id" />
+
+                                    <button class="btn btn-danger btn-sm">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                    </button>
+
+                                </form>
+                            }
 
                         </td>
 
                     </tr>
                 }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="8" class="text-center">No ICT assets found.</td>
+                </tr>
+            }
 
-                </tbody>
+            </tbody>
 
-            </table>
-
-        </div>
+        </table>
 
     </div>
+
+</div>
+}
+    
+
+@if(Model.CategoryId == null || selectedCategory != "ICT"){
+<div class="card shadow border-0">
+
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0">Non-ICT Supplies</h5>
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table table-hover mb-0">
+
+            <thead class="table-light">
+                <tr>
+                    <th>Code</th>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th>Location</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            @if (nonIctItems.Any())
+            {
+                @foreach (var item in nonIctItems)
+                {
+                    <tr>
+
+                        <td>@item.ItemCode</td>
+                        <td>@item.ItemName</td>
+                        <td>@item.Category?.Name</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.Location</td>
+
+                        <td class="text-center">
+
+                            <a asp-action="Details"
+                               asp-route-id="@item.Id"
+                               class="btn btn-info btn-sm">
+                                <i class="fa fa-eye"></i>
+                            </a>
+
+                            <a asp-action="Edit"
+                               asp-route-id="@item.Id"
+                               class="btn btn-warning btn-sm">
+                                <i class="fa fa-edit"></i>
+                            </a>
+
+                            <a asp-action="Consume"
+                               asp-route-id="@item.Id"
+                               class="btn btn-success btn-sm"
+                               title="Consume">
+                                <i class="fa-solid fa-box-open"></i>
+                            </a>
+
+                        </td>
+
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center">No Non-ICT supplies found.</td>
+                </tr>
+            }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+}
+
+
+
 
     @if (Model.TotalPages > 1)
 {

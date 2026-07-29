@@ -1,57 +1,102 @@
 @model List<InventorySystem.Models.Item>
 
 @{
-    ViewData["Title"]="Inventory Report";
+    ViewData["Title"] = "Inventory Report";
+
+    var ictItems = Model.Where(i => i.Category?.Name == "ICT").ToList();
+    var nonIctItems = Model.Where(i => i.Category?.Name != "ICT").ToList();
 }
 
 
-<table class="table table-bordered">
+<h3 class="mb-3">ICT Assets</h3>
 
-<thead>
+<table class="table table-bordered mb-5">
 
+<thead class="table-light">
 <tr>
-<th>Code</th>
-<th>Name</th>
-<th>Category</th>
-<th>Serial</th>
-<th>Status</th>
+    <th>Code</th>
+    <th>Name</th>
+    <th>Category</th>
+    <th>Serial</th>
+    <th>Status</th>
 </tr>
-
 </thead>
-
 
 <tbody>
 
-@foreach(var item in Model)
+@foreach(var item in ictItems)
 {
-
 <tr>
+    <td>@item.ItemCode</td>
+    <td>@item.ItemName</td>
+    <td>@item.Category?.Name</td>
+    <td>@item.SerialNumber</td>
 
-<td>@item.ItemCode</td>
-
-<td>@item.ItemName</td>
-
-<td>@item.Category?.Name</td>
-
-<td>@item.SerialNumber</td>
-
-<td>
-    @if (item.Status == ItemStatus.Available)
-    {
-        <span class="badge bg-success">Available</span>
-    }
-    else if (item.Status == ItemStatus.Borrowed)
-    {
-        <span class="badge bg-warning">Borrowed</span>
-    }
-    else if (item.Status == ItemStatus.Defective)
-    {
-        <span class="badge bg-danger">Defective</span>
-    }
-</td>
-
+    <td>
+        @if (item.Status == ItemStatus.Available)
+        {
+            <span class="badge bg-success">Available</span>
+        }
+        else if (item.Status == ItemStatus.Borrowed)
+        {
+            <span class="badge bg-warning text-dark">Borrowed</span>
+        }
+        else if (item.Status == ItemStatus.Defective)
+        {
+            <span class="badge bg-danger">Defective</span>
+        }
+    </td>
 </tr>
+}
 
+@if(!ictItems.Any())
+{
+<tr>
+    <td colspan="5" class="text-center">
+        No ICT assets found.
+    </td>
+</tr>
+}
+
+</tbody>
+
+</table>
+
+
+<h3 class="mb-3">Non-ICT Supplies</h3>
+
+<table class="table table-bordered">
+
+<thead class="table-light">
+<tr>
+    <th>Code</th>
+    <th>Name</th>
+    <th>Category</th>
+    <th>Quantity</th>
+    <th>Location</th>
+</tr>
+</thead>
+
+<tbody>
+
+@foreach(var item in nonIctItems)
+{
+<tr>
+    <td>@item.ItemCode</td>
+    <td>@item.ItemName</td>
+    <td>@item.Category?.Name</td>
+    <td>@item.Quantity</td>
+    <td>@item.Location</td>
+</tr>
+}
+
+@if(!nonIctItems.Any())
+{
+<tr>
+    <td colspan="5" class="text-center">
+        No Non-ICT supplies found.
+    </td>
+</tr>
 }
 
 </tbody>

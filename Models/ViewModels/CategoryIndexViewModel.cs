@@ -15,6 +15,7 @@ public class CategoryIndexViewModel
     public int AvailableAssets { get; set; }
 
     public int BorrowedAssets { get; set; }
+    public int Quantity { get; set; }
 
     public bool IsLowStock => AvailableAssets <= MinimumStock;
 }

@@ -4,7 +4,8 @@ public enum TransactionType
 {
     Borrow,
     Return,
-    Receive
+    Receive,
+    Consume
 }
 
 public class Transaction

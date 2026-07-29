@@ -205,5 +205,65 @@ public class InventoryService : IInventoryService
         return (items, totalCount);
     }
 
+public async Task<bool> CanConsumeAsync(int itemId, int quantity)
+{
+    var item = await _db.Items.FindAsync(itemId);
+
+    if (item == null)
+        return false;
+
+    return item.Quantity >= quantity;
+}
+
+public async Task<bool> ConsumeItemAsync(
+    int itemId,
+    int quantity,
+    int userId,
+    string? remarks = null)
+{
+    var item = await _db.Items.FindAsync(itemId);
+
+    if (item == null)
+        return false;
+
+    if (quantity <= 0)
+        return false;
+
+    if (item.Quantity < quantity)
+        return false;
+
+    item.Quantity -= quantity;
+    item.UpdatedAt = DateTime.UtcNow;
+
+    _db.Transactions.Add(new Transaction
+    {
+        ItemId = item.Id,
+        UserId = userId,
+        Quantity = quantity,
+        TransactionType = TransactionType.Consume,
+        TransactionDate = DateTime.UtcNow,
+        Remarks = remarks
+    });
+
+    await _db.SaveChangesAsync();
+
+    return true;
+}
+
+public async Task ConsumeItemAsync(int itemId, int quantity)
+{
+    var item = await _db.Items.FindAsync(itemId);
+
+    if (item == null)
+        throw new InvalidOperationException("Item not found.");
+
+    if (item.Quantity < quantity)
+        throw new InvalidOperationException("Not enough quantity available.");
+
+    item.Quantity -= quantity;
+    item.UpdatedAt = DateTime.UtcNow;
+
+    await _db.SaveChangesAsync();
+}
     
 }

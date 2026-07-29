@@ -18,17 +18,32 @@ public class DashboardService : IDashboardService
     {
         var vm = new DashboardViewModel();
 
-        vm.Cards.TotalItems = await _db.Items.CountAsync();
+        vm.Cards.TotalItems = await _db.Items
+            .Include(i => i.Category)
+            .CountAsync(i =>
+                (i.Category != null &&
+                i.Category.Name == "ICT" &&
+                i.Status == ItemStatus.Available)
+                ||
+                (i.Category != null &&
+                i.Category.Name != "ICT"));
 
         vm.Cards.Categories = await _db.Categories.CountAsync();
 
-        vm.Cards.LowStock = await _db.Categories
-            .CountAsync(c =>
-            _db.Items.Count(i => i.CategoryId == c.Id) < c.MinimumStock);
+        vm.Cards.LowStock = await _db.Categories.CountAsync(c =>
+            _db.Items.Count(i =>
+                i.CategoryId == c.Id &&
+                (c.Name != "ICT"
+                    ? true
+                    : i.Status == ItemStatus.Available)
+            ) < c.MinimumStock);
 
-        vm.Cards.BorrowedItems = await _db.Transactions
-            .Where(x => x.TransactionType == TransactionType.Borrow)
-            .SumAsync(x => (int?)x.Quantity) ?? 0;
+        vm.Cards.BorrowedItems = await _db.Items
+            .Include(i => i.Category)
+            .CountAsync(i =>
+                i.Category != null &&
+                i.Category.Name == "ICT" &&
+                i.Status == ItemStatus.Borrowed);
 
         vm.Cards.ReturnedItems = await _db.Transactions
             .Where(x => x.TransactionType == TransactionType.Return)

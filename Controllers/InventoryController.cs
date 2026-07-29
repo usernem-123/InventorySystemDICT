@@ -59,52 +59,66 @@ public class InventoryController : Controller
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(InventoryFormViewModel vm)
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Create(InventoryFormViewModel vm)
+{
+    if (!ModelState.IsValid)
     {
-        if (!ModelState.IsValid)
-        {
-            vm.Categories = (await _categoryService.GetAllAsync())
-                .Select(c => new SelectListItem
-                {
-                    Value = c.Id.ToString(),
-                    Text = c.Name
-                })
-                .ToList();
+        vm.Categories = (await _categoryService.GetAllAsync())
+            .Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Name
+            })
+            .ToList();
 
-            return View(vm);
-        }
-
-        var item = new Item
-        {
-            ItemName = vm.ItemName,
-            Description = vm.Description,
-            CategoryId = vm.CategoryId,
-            Location = vm.Location,
-            SerialNumber = vm.SerialNumber
-        };
-
-        try
-        {
-            await _inventoryService.CreateItemAsync(item);
-            TempData["Success"] = "Item created successfully";
-            return RedirectToAction(nameof(Index));
-        }
-        catch(InvalidOperationException ex)
-        {
-            ModelState.AddModelError(nameof(vm.SerialNumber), ex.Message);
-
-            vm.Categories = (await _categoryService.GetAllAsync())
-                .Select(c => new SelectListItem
-                {
-                   Value = c.Id.ToString(),
-                   Text = c.Name 
-                })
-                .ToList();
-
-                return View(vm);
-        }
+        return View(vm);
     }
+
+    var category = await _categoryService.GetByIdAsync(vm.CategoryId);
+
+    var item = new Item
+    {
+        ItemName = vm.ItemName,
+        Description = vm.Description,
+        CategoryId = vm.CategoryId,
+        Location = vm.Location
+    };
+
+    if (category?.Name == "ICT")
+    {
+        item.SerialNumber = vm.SerialNumber;
+        item.Quantity = 1;
+    }
+    else
+    {
+        item.SerialNumber = null;
+        item.Quantity = vm.Quantity;
+    }
+
+    try
+    {
+        await _inventoryService.CreateItemAsync(item);
+
+        TempData["Success"] = "Item created successfully";
+
+        return RedirectToAction(nameof(Index));
+    }
+    catch (InvalidOperationException ex)
+    {
+        ModelState.AddModelError(nameof(vm.SerialNumber), ex.Message);
+
+        vm.Categories = (await _categoryService.GetAllAsync())
+            .Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Name
+            })
+            .ToList();
+
+        return View(vm);
+    }
+}
 
     public async Task<IActionResult> Edit(int id)
     {
@@ -120,6 +134,7 @@ public class InventoryController : Controller
             ItemName = item.ItemName,
             Description = item.Description,
             SerialNumber = item.SerialNumber,
+            Quantity = item.Quantity,
             CategoryId = item.CategoryId,
             Location = item.Location,
 
@@ -136,54 +151,68 @@ public class InventoryController : Controller
     }
 
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(InventoryFormViewModel vm)
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Edit(InventoryFormViewModel vm)
+{
+    if (!ModelState.IsValid)
     {
-        if (!ModelState.IsValid)
-        {
-            vm.Categories = (await _categoryService.GetAllAsync())
-                .Select(c => new SelectListItem
-                {
-                    Value = c.Id.ToString(),
-                    Text = c.Name
-                })
-                .ToList();
+        vm.Categories = (await _categoryService.GetAllAsync())
+            .Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Name
+            })
+            .ToList();
 
-            return View(vm);
-        }
-
-        var item = await _inventoryService.GetItemAsync(vm.Id);
-
-        if (item == null)
-            return NotFound();
-
-        item.ItemName = vm.ItemName;
-        item.Description = vm.Description;
-        item.CategoryId = vm.CategoryId;
-        item.SerialNumber = vm.SerialNumber;
-        item.Location = vm.Location;
-
-        try
-        {
-            await _inventoryService.UpdateItemAsync(item);
-            TempData["Success"] = "Item updated successfully";
-            return RedirectToAction(nameof(Index));
-        }
-        catch(InvalidOperationException ex)
-        {
-            ModelState.AddModelError(nameof(vm.SerialNumber), ex.Message);
-
-            vm.Categories = (await _categoryService.GetAllAsync())
-                .Select(c => new SelectListItem
-                {
-                    Value = c.Id.ToString(),
-                    Text = c.Name
-                })
-                .ToList();
-
-            return View(vm);
-        }
+        return View(vm);
     }
+
+    var item = await _inventoryService.GetItemAsync(vm.Id);
+
+    if (item == null)
+        return NotFound();
+
+    var category = await _categoryService.GetByIdAsync(vm.CategoryId);
+
+    item.ItemName = vm.ItemName;
+    item.Description = vm.Description;
+    item.CategoryId = vm.CategoryId;
+    item.Location = vm.Location;
+
+    if (category?.Name == "ICT")
+    {
+        item.SerialNumber = vm.SerialNumber;
+        item.Quantity = 1;
+    }
+    else
+    {
+        item.SerialNumber = null;
+        item.Quantity = vm.Quantity;
+    }
+
+    try
+    {
+        await _inventoryService.UpdateItemAsync(item);
+
+        TempData["Success"] = "Item updated successfully";
+
+        return RedirectToAction(nameof(Index));
+    }
+    catch (InvalidOperationException ex)
+    {
+        ModelState.AddModelError(nameof(vm.SerialNumber), ex.Message);
+
+        vm.Categories = (await _categoryService.GetAllAsync())
+            .Select(c => new SelectListItem
+            {
+                Value = c.Id.ToString(),
+                Text = c.Name
+            })
+            .ToList();
+
+        return View(vm);
+    }
+}
 
     public async Task<IActionResult> Details(int id)
     {
@@ -194,6 +223,47 @@ public class InventoryController : Controller
 
         return View(item);
     }
+
+    public async Task<IActionResult> Consume(int id)
+{
+    var item = await _inventoryService.GetItemAsync(id);
+
+    if (item == null)
+        return NotFound();
+
+    if (item.Category?.Name == "ICT")
+    {
+        TempData["Error"] = "ICT assets cannot be consumed.";
+        return RedirectToAction(nameof(Index));
+    }
+
+    return View(item);
+}
+
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Consume(int id, int quantity)
+{
+    if (quantity <= 0)
+    {
+        TempData["Error"] = "Invalid quantity.";
+        return RedirectToAction(nameof(Consume), new { id });
+    }
+
+    try
+    {
+        await _inventoryService.ConsumeItemAsync(id, quantity);
+
+        TempData["Success"] = "Items consumed successfully.";
+
+        return RedirectToAction(nameof(Index));
+    }
+    catch (InvalidOperationException ex)
+    {
+        TempData["Error"] = ex.Message;
+        return RedirectToAction(nameof(Consume), new { id });
+    }
+}
 
     [HttpPost]
     [ValidateAntiForgeryToken]

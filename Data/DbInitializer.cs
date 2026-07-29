@@ -9,20 +9,41 @@ public static class DbInitializer
     {
         db.Database.EnsureCreated();
 
-        if(db.Users.Any()) return;
-
-        var admin = new User
+        if (!db.Users.Any())
         {
-          Username = "admin",
-          FullName = "System Administrator",
-          Role = "Admin"  
-        };
+            var admin = new User
+            {
+                Username = "admin",
+                FullName = "System Administrator",
+                Role = "Admin"
+            };
 
-        var hasher = new PasswordHasher<User>();
+            var hasher = new PasswordHasher<User>();
+            admin.PasswordHash = hasher.HashPassword(admin, "root");
 
-        admin.PasswordHash = hasher.HashPassword(admin, "root");
+            db.Users.Add(admin);
+        }
 
-        db.Users.Add(admin);
+        if (!db.Categories.Any())
+        {
+            db.Categories.AddRange(
+                new Category
+                {
+                    Name = "ICT",
+                    MinimumStock = 1
+                },
+                new Category
+                {
+                    Name = "Non-ICT (Office)",
+                    MinimumStock = 10
+                },
+                new Category
+                {
+                    Name = "Non-ICT (Cleaning)",
+                    MinimumStock = 10
+                }
+            );
+        }
 
         db.SaveChanges();
     }

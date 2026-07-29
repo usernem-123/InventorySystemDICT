@@ -1,3 +1,5 @@
+@using InventorySystem.Models
+
 @{
     ViewData["Title"] = "Borrow Items";
 }
@@ -6,7 +8,8 @@
 
     <div class="card-header bg-primary text-white">
         <h4 class="mb-0">
-            Borrow Items
+            <i class="fa-solid fa-hand-holding"></i>
+            Borrow ICT Items
         </h4>
     </div>
 
@@ -16,74 +19,94 @@
 
             @Html.AntiForgeryToken()
 
-            <div class="row">
+            <div class="mb-3">
 
-                <div class="col-md-5">
+                <label class="form-label fw-bold">
+                    Available ICT Assets
+                </label>
 
-                    <label class="form-label fw-bold">
-                        Available Items
-                    </label>
+                <input type="text"
+                       id="searchItems"
+                       class="form-control mb-3"
+                       placeholder="Search by item name, code, or serial number..." />
 
-                    <select id="availableItems"
-                            class="form-select"
-                            size="12"
-                            multiple>
+                <small class="text-muted">
+                    Click an item to select it for borrowing. Click again to deselect.
+                </small>
 
-                        @foreach (var item in ViewBag.Items)
-                        {
-                            <option value="@item.Id">
-                                @item.ItemName (@item.ItemCode)
-                            </option>
-                        }
+            </div>
 
-                    </select>
+            <div id="availableItems"
+                 class="row g-3"
+                 style="max-height:450px; overflow-y:auto;">
 
-                </div>
+                @foreach (var item in ViewBag.Items)
+{
+    if (item.Category != null &&
+        item.Category.Name.Equals("ICT", StringComparison.OrdinalIgnoreCase))
+    {
+        <div class="col-md-4 item-container">
 
-                <div class="col-md-2 d-flex flex-column justify-content-center">
+            <div class="card item-card h-100 shadow-sm"
+                 data-id="@item.Id"
+                 data-search="@($"{item.ItemName} {item.ItemCode} {item.SerialNumber}".ToLower())"
+                 style="cursor:pointer; transition:.2s;">
 
-                    <button type="button"
-                            id="btnAdd"
-                            class="btn btn-success mb-2">
+                <div class="card-body">
 
-                        <i class="fa-solid fa-arrow-right"></i>
+                    <div class="d-flex justify-content-between align-items-start">
 
-                    </button>
+                        <div>
 
-                    <button type="button"
-                            id="btnRemove"
-                            class="btn btn-danger">
+                            <h6 class="fw-bold mb-1">
+                                @item.ItemName
+                            </h6>
 
-                        <i class="fa-solid fa-arrow-left"></i>
+                            <div class="text-muted small">
+                                <strong>Code:</strong> @item.ItemCode
+                            </div>
 
-                    </button>
+                            @if (!string.IsNullOrWhiteSpace(item.SerialNumber))
+                            {
+                                <div class="text-muted small">
+                                    <strong>Serial:</strong> @item.SerialNumber
+                                </div>
+                            }
 
-                </div>
+                            <div class="text-muted small">
+                                <strong>Location:</strong> @item.Location
+                            </div>
 
-                <div class="col-md-5">
+                        </div>
 
-                    <label class="form-label fw-bold">
-                        Borrow List
-                    </label>
+                        <i class="fa-solid fa-circle-check fa-xl text-success check-icon d-none"></i>
 
-                    <select id="borrowItems"
-                            class="form-select"
-                            size="12"
-                            multiple>
-
-                    </select>
+                    </div>
 
                 </div>
 
             </div>
 
+        </div>
+    }
+}
 
-            <hr class="my-4"/>
+            </div>
 
+            <div class="mt-3">
+
+                <span class="badge bg-success fs-6">
+                    Selected Items:
+                    <span id="selectedCount">0</span>
+                </span>
+
+            </div>
+
+            <hr />
 
             <div class="mb-3">
 
-                <label class="form-label">
+                <label class="form-label fw-bold">
                     Borrower
                 </label>
 
@@ -106,10 +129,9 @@
 
             </div>
 
-
             <div class="mb-3">
 
-                <label class="form-label">
+                <label class="form-label fw-bold">
                     Remarks
                 </label>
 
@@ -119,9 +141,7 @@
 
             </div>
 
-
             <div id="hiddenItems"></div>
-
 
             <button type="submit"
                     class="btn btn-success">
@@ -144,49 +164,83 @@
 
 </div>
 
-@section Scripts{
-
+@section Scripts
+{
 <script>
 
-const available = document.getElementById("availableItems");
-const selected = document.getElementById("borrowItems");
+const selectedItems = new Set();
 
-document.getElementById("btnAdd").onclick = function () {
+const hiddenContainer = document.getElementById("hiddenItems");
+const selectedCount = document.getElementById("selectedCount");
 
-    [...available.selectedOptions].forEach(option => {
-        selected.appendChild(option);
+function updateCount() {
+    selectedCount.textContent = selectedItems.size;
+}
+
+document.querySelectorAll(".item-card").forEach(card => {
+
+    card.addEventListener("click", function () {
+
+        const id = this.dataset.id;
+        const icon = this.querySelector(".check-icon");
+
+        if (selectedItems.has(id)) {
+
+            selectedItems.delete(id);
+
+            this.classList.remove("border-success");
+            this.classList.remove("bg-success-subtle");
+
+            icon.classList.add("d-none");
+
+        } else {
+
+            selectedItems.add(id);
+
+            this.classList.add("border-success");
+            this.classList.add("bg-success-subtle");
+
+            icon.classList.remove("d-none");
+
+        }
+
+        updateCount();
+
     });
 
-};
+});
 
-document.getElementById("btnRemove").onclick = function () {
+document.getElementById("searchItems").addEventListener("keyup", function () {
 
-    [...selected.selectedOptions].forEach(option => {
-        available.appendChild(option);
+    const value = this.value.toLowerCase();
+
+    document.querySelectorAll(".item-card").forEach(card => {
+
+        const match = card.dataset.search.includes(value);
+
+        card.closest(".item-container").style.display = match ? "" : "none";
+
     });
 
-};
+});
 
 document.querySelector("form").addEventListener("submit", function () {
 
-    const hidden = document.getElementById("hiddenItems");
-    hidden.innerHTML = "";
+    hiddenContainer.innerHTML = "";
 
-    [...selected.options].forEach(option => {
-
-        option.selected = true;
+    selectedItems.forEach(id => {
 
         const input = document.createElement("input");
+
         input.type = "hidden";
         input.name = "itemIds";
-        input.value = option.value;
+        input.value = id;
 
-        hidden.appendChild(input);
+        hiddenContainer.appendChild(input);
 
     });
 
 });
 
 </script>
-
 }

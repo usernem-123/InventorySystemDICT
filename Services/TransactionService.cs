@@ -62,7 +62,10 @@ public class TransactionService : ITransactionService
     public async Task<List<Item>> GetAvailableItemsAsync()
     {
         return await _db.Items
-            .Where(x => x.Status == ItemStatus.Available)
+            .Include(x => x.Category)
+            .Where(x => x.Status == ItemStatus.Available &&
+                        x.Category != null &&
+                        x.Category.Name == "ICT")
             .OrderBy(x => x.ItemName)
             .ToListAsync();
     }
