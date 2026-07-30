@@ -50,8 +50,7 @@ public class DashboardService : IDashboardService
             .SumAsync(x => (int?)x.Quantity) ?? 0;
 
         vm.Cards.ReceivedItems = await _db.Transactions
-            .Where(x => x.TransactionType == TransactionType.Receive)
-            .SumAsync(x => (int?)x.Quantity) ?? 0;
+        .CountAsync(x => x.TransactionType == TransactionType.Receive);
 
         vm.RecentTransactions = await _db.Transactions
             .Include(x => x.Item)
