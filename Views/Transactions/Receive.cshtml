@@ -150,7 +150,8 @@
                         <input asp-for="Quantity"
                             class="form-control"
                             type="number"
-                            min="1"/>
+                            min="1"
+                            id="Quantity"/>
 
                     </div>
 
@@ -195,99 +196,114 @@
 
 <script>
 
-document.getElementById("ExistingItemId")
-.addEventListener("change", async function(){
+document.addEventListener("DOMContentLoaded", () => {
 
-    if(this.value === "")
-    {
-        document.getElementById("ItemName").value = "";
-        document.getElementById("Description").value = "";
-        document.getElementById("CategoryId").value = "";
-        document.getElementById("Location").value = "";
+    const existingItem = document.getElementById("ExistingItemId");
+    const category = document.getElementById("CategoryId");
+    const itemName = document.getElementById("ItemName");
+    const description = document.getElementById("Description");
+    const location = document.getElementById("Location");
+    const serialNumber = document.getElementById("SerialNumber");
+    const quantity = document.getElementById("Quantity");
 
-        return;
+    function updateForm() {
+
+        const serialSection = document.getElementById("serialSection");
+        const quantitySection = document.getElementById("quantitySection");
+
+        if (category.selectedIndex <= 0) {
+
+            serialSection.style.display = "block";
+            quantitySection.style.display = "block";
+
+            quantity.value = 1;
+
+            return;
+        }
+
+        const option = category.options[category.selectedIndex];
+        const type = option.dataset.type;
+
+        if (type === "NonICT") {
+
+            serialSection.style.display = "none";
+            quantitySection.style.display = "block";
+
+            serialNumber.value = "";
+
+        }
+        else {
+
+            serialSection.style.display = "block";
+            quantitySection.style.display = "none";
+
+            quantity.value = 1;
+
+        }
     }
 
+    category.addEventListener("change", () => {
 
-    const response = await fetch(`/Transactions/GetItem/${this.value}`);
+        if (existingItem.value !== "") {
 
+            const selectedOption = category.options[category.selectedIndex];
 
-    if(!response.ok)
-    {
-        console.log("Failed to load item");
-        return;
-    }
+            if (selectedOption.dataset.type === "NonICT") {
 
+                existingItem.value = "";
 
-    const item = await response.json();
+                itemName.value = "";
+                description.value = "";
+                location.value = "";
+                serialNumber.value = "";
+            }
+        }
 
+        updateForm();
 
-    document.getElementById("ItemName").value =
-        item.itemName ?? "";
+    });
 
+    existingItem.addEventListener("change", async function () {
 
-    document.getElementById("Description").value =
-        item.description ?? "";
+        if (this.value === "") {
 
+            itemName.value = "";
+            description.value = "";
+            category.value = "";
+            location.value = "";
+            serialNumber.value = "";
 
-    document.getElementById("CategoryId").value =
-        item.categoryId;
+            updateForm();
+
+            return;
+        }
+
+        const response = await fetch(`/Transactions/GetItem/${this.value}`);
+
+        if (!response.ok) {
+
+            console.log("Failed to load item");
+            return;
+
+        }
+
+        const item = await response.json();
+
+        itemName.value = item.itemName ?? "";
+        description.value = item.description ?? "";
+        category.value = item.categoryId;
+        location.value = item.location ?? "";
+
+        updateForm();
+
+    });
+
     updateForm();
-
-
-    document.getElementById("Location").value =
-        item.location ?? "";
-
 
 });
 
-function updateForm() {
-
-    const category = document.getElementById("CategoryId");
-
-    const serialSection = document.getElementById("serialSection");
-    const quantitySection = document.getElementById("quantitySection");
-    const existingItem = document.getElementById("ExistingItemId");
-    const quantity = document.getElementById("Quantity");
-
-    if (category.selectedIndex === 0) {
-
-        serialSection.style.display = "block";
-        quantitySection.style.display = "block";
-        existingItem.disabled = false;
-        quantity.value = 1;
-
-        return;
-    }
-
-    const option = category.options[category.selectedIndex];
-    const type = option.dataset.type;
-
-    if (type === "NonICT") {
-
-        serialSection.style.display = "none";
-        quantitySection.style.display = "block";
-
-        document.getElementById("SerialNumber").value = "";
-
-        existingItem.disabled = true;
-        existingItem.value = "";
-
-    }
-    else {
-
-        serialSection.style.display = "block";
-        quantitySection.style.display = "none";
-
-        quantity.value = 1;
-
-        existingItem.disabled = false;
-    }
-}
-
 </script>
 
-
-<partial name="_ValidationScriptsPartial"/>
+<partial name="_ValidationScriptsPartial" />
 
 }
