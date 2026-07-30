@@ -27,65 +27,92 @@
     <div class="card-body">
 
 
-        <table class="table table-striped">
+        <table class="table table-hover align-middle">
 
+    <thead class="table-light">
+        <tr>
+            <th>Date</th>
+            <th>Transaction</th>
+            <th>Item</th>
+            <th>Details</th>
+            <th>Borrower</th>
+            <th>Remarks/Purpose</th>
+        </tr>
+    </thead>
 
-            <thead>
+    <tbody>
 
-                <tr>
+    @foreach (var t in Model)
+    {
+        <tr>
 
-                    <th>Item</th>
-                    <th>Borrower</th>
-                    <th>Type</th>
-                    <th>Date</th>
-                    <th>Remarks</th>
+            <td>
+                @t.TransactionDate.ToString("MMM dd, yyyy HH:mm")
+            </td>
 
-                </tr>
+            <td>
 
-            </thead>
+                @switch (t.TransactionType)
+                {
+                    case TransactionType.Borrow:
+                        <span class="badge bg-warning text-dark">Borrow</span>
+                        break;
 
+                    case TransactionType.Return:
+                        <span class="badge bg-success">Return</span>
+                        break;
 
-            <tbody>
+                    case TransactionType.Receive:
+                        <span class="badge bg-info">Receive</span>
+                        break;
+                }
 
+            </td>
 
-            @foreach(var t in Model)
-            {
+            <td>
+                <strong>@t.Item?.ItemName</strong>
+            </td>
 
-                <tr>
+            <td>
 
-                    <td>
-                        @t.Item?.ItemName
-                    </td>
+                @if (t.Item?.Category?.Type == CategoryType.ICT)
+                {
+                    <span>
+                        SN:
+                        <strong>@t.Item.SerialNumber</strong>
+                    </span>
+                }
+                else
+                {
+                    <span>
+                        Qty:
+                        <strong>@t.Quantity</strong>
+                    </span>
+                }
 
+            </td>
 
-                    <td>
-                        @t.Borrower?.FullName
-                    </td>
+            <td>
 
+                @if (t.TransactionType == TransactionType.Receive)
+                {
+                    <span class="text-muted">—</span>
+                }
+                else
+                {
+                    @t.Borrower?.FullName
+                }
 
-                    <td>
-                        @t.TransactionType
-                    </td>
+            </td>
 
+            <td>@t.Remarks</td>
 
-                    <td>
-                        @t.TransactionDate.ToString("yyyy-MM-dd HH:mm")
-                    </td>
+        </tr>
+    }
 
+    </tbody>
 
-                    <td>
-                        @t.Remarks
-                    </td>
-
-                </tr>
-
-            }
-
-
-            </tbody>
-
-
-        </table>
+</table>
 
 
     </div>

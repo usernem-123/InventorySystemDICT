@@ -26,7 +26,9 @@ public interface ITransactionService
         int itemId,
         int borrowerId,
         int userId,
-        string? remarks
+        string? remarks,
+        DateTime borrowDate,
+        DateTime dueDate
     );
 
 

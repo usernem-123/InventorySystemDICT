@@ -42,7 +42,9 @@ public class TransactionsController : Controller
     public async Task<IActionResult> Borrow(
         List<int> itemIds,
         int borrowerId,
-        string? remarks)
+        string? remarks,
+        DateTime borrowDate,
+        int days)
     {
         if (itemIds == null || itemIds.Count == 0)
         {
@@ -64,7 +66,9 @@ public class TransactionsController : Controller
                 itemId,
                 borrowerId,
                 userId,
-                remarks
+                remarks,
+                borrowDate,
+                borrowDate.AddDays(days)
             );
         }
 
@@ -121,7 +125,7 @@ public class TransactionsController : Controller
     public async Task<IActionResult> Receive()
     {
         var vm = new ReceiveViewModel
-        {
+{
             ExistingItems = (await _service.GetAllItemsAsync())
                 .Select(x => new SelectListItem
                 {
@@ -130,13 +134,7 @@ public class TransactionsController : Controller
                 })
                 .ToList(),
 
-            Categories = (await _service.GetCategoriesAsync())
-                .Select(x => new SelectListItem
-                {
-                    Value = x.Id.ToString(),
-                    Text = x.Name
-                })
-                .ToList()
+            CategoryList = await _service.GetCategoriesAsync()
         };
 
         return View(vm);
@@ -156,13 +154,7 @@ public class TransactionsController : Controller
                 })
                 .ToList();
 
-            vm.Categories = (await _service.GetCategoriesAsync())
-                .Select(x => new SelectListItem
-                {
-                    Value = x.Id.ToString(),
-                    Text = x.Name
-                })
-                .ToList();
+            vm.CategoryList = await _service.GetCategoriesAsync();
 
             return View(vm);
         }

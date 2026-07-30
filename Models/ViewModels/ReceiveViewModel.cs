@@ -20,7 +20,7 @@ public class ReceiveViewModel
     public string SerialNumber { get; set; } = "";
 
     public int Quantity { get; set; } = 1;
-
+    public List<Category> CategoryList { get; set; } = [];
     public string? Remarks { get; set; }
 
     public List<SelectListItem> ExistingItems { get; set; } = [];

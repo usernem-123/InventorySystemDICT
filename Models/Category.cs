@@ -1,5 +1,9 @@
 namespace InventorySystem.Models;
-
+public enum CategoryType
+{
+    ICT,
+    NonICT
+}
 public class Category
 {
     public int Id { get; set; }
@@ -13,4 +17,6 @@ public class Category
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<Item> Items { get; set; } = new List<Item>();
+
+    public CategoryType Type {get;set;}
 }

@@ -91,13 +91,17 @@
 
                     <select asp-for="CategoryId"
                             id="CategoryId"
-                            asp-items="Model.Categories"
                             class="form-select">
 
-                        <option value="">
-                            Select Category
-                        </option>
+                        <option value="">Select Category</option>
 
+                        @foreach(var category in Model.CategoryList)
+                        {
+                            <option value="@category.Id"
+                                    data-type="@category.Type">
+                                @category.Name
+                            </option>
+                        }
                     </select>
 
                 </div>
@@ -118,14 +122,15 @@
                     </div>
 
 
-                    <div class="col-md-6">
+                    <div class="col-md-6" id="serialSection">
 
                         <label asp-for="SerialNumber"
                                class="form-label">
                         </label>
 
                         <input asp-for="SerialNumber"
-                               class="form-control" />
+                            id="SerialNumber"
+                            class="form-control" />
 
                         <span asp-validation-for="SerialNumber"
                               class="text-danger">
@@ -138,16 +143,14 @@
 
                 <div class="row mt-3">
 
-                    <div class="col-md-6">
+                    <div class="col-md-6" id="quantitySection">
 
-                        <label asp-for="Quantity"
-                               class="form-label">
-                        </label>
+                        <label asp-for="Quantity" class="form-label"></label>
 
                         <input asp-for="Quantity"
-                               class="form-control"
-                               type="number"
-                               min="1" />
+                            class="form-control"
+                            type="number"
+                            min="1"/>
 
                     </div>
 
@@ -229,6 +232,7 @@ document.getElementById("ExistingItemId")
 
     document.getElementById("CategoryId").value =
         item.categoryId;
+    updateForm();
 
 
     document.getElementById("Location").value =
@@ -236,6 +240,50 @@ document.getElementById("ExistingItemId")
 
 
 });
+
+function updateForm() {
+
+    const category = document.getElementById("CategoryId");
+
+    const serialSection = document.getElementById("serialSection");
+    const quantitySection = document.getElementById("quantitySection");
+    const existingItem = document.getElementById("ExistingItemId");
+    const quantity = document.getElementById("Quantity");
+
+    if (category.selectedIndex === 0) {
+
+        serialSection.style.display = "block";
+        quantitySection.style.display = "block";
+        existingItem.disabled = false;
+        quantity.value = 1;
+
+        return;
+    }
+
+    const option = category.options[category.selectedIndex];
+    const type = option.dataset.type;
+
+    if (type === "NonICT") {
+
+        serialSection.style.display = "none";
+        quantitySection.style.display = "block";
+
+        document.getElementById("SerialNumber").value = "";
+
+        existingItem.disabled = true;
+        existingItem.value = "";
+
+    }
+    else {
+
+        serialSection.style.display = "block";
+        quantitySection.style.display = "none";
+
+        quantity.value = 1;
+
+        existingItem.disabled = false;
+    }
+}
 
 </script>
 

@@ -31,4 +31,8 @@ public class Transaction
     public int UserId { get; set; }
 
     public User? User { get; set; }
+
+    public DateTime BorrowDate { get; set; }
+
+    public DateTime DueDate { get; set; }
 }

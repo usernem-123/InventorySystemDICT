@@ -6,61 +6,131 @@
 
 <div class="card shadow">
 
-<div class="card-header bg-success text-white">
+    <div class="card-header bg-success text-white">
+        <h4>Add Borrower</h4>
+    </div>
 
-<h4>Add Borrower</h4>
+    <div class="card-body">
+
+        <form asp-action="Create" method="post">
+
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="Type" class="form-label"></label>
+
+                <select asp-for="Type"
+                        class="form-select"
+                        id="BorrowerType">
+
+                    <option value="Individual">Individual</option>
+                    <option value="Institution">Institution / Agency</option>
+
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="FullName"
+                       id="nameLabel"
+                       class="form-label">
+                </label>
+
+                <input asp-for="FullName"
+                       class="form-control" />
+
+                <span asp-validation-for="FullName"
+                      class="text-danger">
+                </span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Department"
+                       class="form-label">
+                </label>
+
+                <input asp-for="Department"
+                       class="form-control" />
+            </div>
+
+            <div class="mb-3"
+                 id="positionSection">
+
+                <label asp-for="Position"
+                       class="form-label">
+                </label>
+
+                <input asp-for="Position"
+                       class="form-control" />
+
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ContactNumber"
+                       class="form-label">
+                </label>
+
+                <input asp-for="ContactNumber"
+                       class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email"
+                       class="form-label">
+                </label>
+
+                <input asp-for="Email"
+                       class="form-control" />
+            </div>
+
+            <button class="btn btn-success">
+                Save
+            </button>
+
+            <a asp-action="Index"
+               class="btn btn-secondary">
+                Cancel
+            </a>
+
+        </form>
+
+    </div>
 
 </div>
 
-<div class="card-body">
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial"/>
 
-<form asp-action="Create">
+    <script>
 
-@Html.AntiForgeryToken()
+        function updateBorrowerForm() {
 
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            const type = document.getElementById("BorrowerType").value;
 
-<div class="mb-3">
-<label asp-for="FullName"></label>
-<input asp-for="FullName" class="form-control"/>
-<span asp-validation-for="FullName" class="text-danger"></span>
-</div>
+            const label = document.getElementById("nameLabel");
+            const position = document.getElementById("positionSection");
 
-<div class="mb-3">
-<label asp-for="Department"></label>
-<input asp-for="Department" class="form-control"/>
-</div>
+            if (type === "Institution") {
 
-<div class="mb-3">
-<label asp-for="Position"></label>
-<input asp-for="Position" class="form-control"/>
-</div>
+                label.textContent = "Institution / Agency";
+                position.classList.add("d-none");
 
-<div class="mb-3">
-<label asp-for="ContactNumber"></label>
-<input asp-for="ContactNumber" class="form-control"/>
-</div>
+            }
+            else {
 
-<div class="mb-3">
-<label asp-for="Email"></label>
-<input asp-for="Email" class="form-control"/>
-</div>
+                label.textContent = "Full Name";
+                position.classList.remove("d-none");
 
-<button class="btn btn-success">
-Save
-</button>
+            }
+        }
 
-<a asp-action="Index"
-class="btn btn-secondary">
-Cancel
-</a>
+        document
+            .getElementById("BorrowerType")
+            .addEventListener("change", updateBorrowerForm);
 
-</form>
+        updateBorrowerForm();
 
-</div>
-
-</div>
-
-@section Scripts{
-<partial name="_ValidationScriptsPartial"/>
+    </script>
 }

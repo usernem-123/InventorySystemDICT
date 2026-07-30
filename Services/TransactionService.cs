@@ -52,10 +52,11 @@ public class TransactionService : ITransactionService
     public async Task<List<Transaction>> GetAllAsync()
     {
         return await _db.Transactions
-            .Include(x => x.Item)
-            .Include(x => x.Borrower)
-            .OrderByDescending(x => x.TransactionDate)
-            .ToListAsync();
+        .Include(x => x.Item)
+            .ThenInclude(i => i.Category)
+        .Include(x => x.Borrower)
+        .OrderByDescending(x => x.TransactionDate)
+        .ToListAsync();
     }
 
 
@@ -64,9 +65,9 @@ public class TransactionService : ITransactionService
         return await _db.Items
             .Include(x => x.Category)
             .Where(x => x.Status == ItemStatus.Available &&
-                        x.Category != null &&
-                        x.Category.Name == "ICT")
-            .OrderBy(x => x.ItemName)
+                x.Category != null &&
+                x.Category.Type == CategoryType.ICT)
+                .OrderBy(x => x.ItemName)
             .ToListAsync();
     }
 
@@ -93,7 +94,9 @@ public class TransactionService : ITransactionService
         int itemId,
         int borrowerId,
         int userId,
-        string? remarks)
+        string? remarks,
+        DateTime borrowDate,
+        DateTime dueDate)
     {
 
         var item = await _db.Items.FindAsync(itemId);
@@ -120,7 +123,9 @@ public class TransactionService : ITransactionService
             TransactionType = TransactionType.Borrow,
             Remarks = remarks,
             TransactionDate = DateTime.UtcNow,
-            UserId = userId
+            UserId = userId,
+            BorrowDate = DateTime.SpecifyKind(borrowDate, DateTimeKind.Utc),
+            DueDate = DateTime.SpecifyKind(dueDate, DateTimeKind.Utc),
         });
 
 
@@ -167,69 +172,61 @@ public class TransactionService : ITransactionService
     }
 
     public async Task ReceiveAsync(
-        ReceiveViewModel vm,
-        int userId)
+    ReceiveViewModel vm,
+    int userId)
+{
+    var category = await _db.Categories
+        .FirstOrDefaultAsync(c => c.Id == vm.CategoryId);
+
+    if (category == null)
+        throw new Exception("Category not found.");
+
+    // NON-ICT (Consumables)
+    if (category.Type == CategoryType.NonICT)
     {
+        var existingItem = await _db.Items
+            .FirstOrDefaultAsync(x =>
+                x.CategoryId == vm.CategoryId &&
+                x.ItemName == vm.ItemName);
 
-        Item item;
-
-
-        if(vm.ExistingItemId.HasValue)
+        if (existingItem != null)
         {
-            var template = await _db.Items
-                .FirstOrDefaultAsync(x => x.Id == vm.ExistingItemId);
+            existingItem.Quantity += vm.Quantity;
+            existingItem.UpdatedAt = DateTime.UtcNow;
 
-
-            if(template == null)
-                throw new Exception("Item template not found");
-
-
-            item = new Item
+            _db.Transactions.Add(new Transaction
             {
-                ItemCode = await GenerateItemCodeAsync(),
-                ItemName = template.ItemName,
-                Description = template.Description,
-                CategoryId = template.CategoryId,
-                Location = template.Location,
-                SerialNumber = vm.SerialNumber,
-                Status = ItemStatus.Available,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
-            };
+                ItemId = existingItem.Id,
+                Quantity = vm.Quantity,
+                TransactionType = TransactionType.Receive,
+                Remarks = vm.Remarks,
+                TransactionDate = DateTime.UtcNow,
+                UserId = userId
+            });
+
+            await _db.SaveChangesAsync();
+            return;
         }
-        else
+
+        var newItem = new Item
         {
-            item = new Item
-            {
-                ItemCode = await GenerateItemCodeAsync(),
-                ItemName = vm.ItemName,
-                Description = vm.Description,
-                CategoryId = vm.CategoryId,
-                Location = vm.Location,
-                SerialNumber = vm.SerialNumber,
-                Status = ItemStatus.Available,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
-            };
-        }
+            ItemCode = await GenerateItemCodeAsync(),
+            ItemName = vm.ItemName,
+            Description = vm.Description,
+            CategoryId = vm.CategoryId,
+            Location = vm.Location,
+            Quantity = vm.Quantity,
+            Status = ItemStatus.Available,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
 
-
-        if(await _db.Items.AnyAsync(x =>
-            x.SerialNumber == item.SerialNumber))
-        {
-            throw new Exception("Serial number already exists.");
-        }
-
-
-        _db.Items.Add(item);
-
+        _db.Items.Add(newItem);
         await _db.SaveChangesAsync();
-
-
 
         _db.Transactions.Add(new Transaction
         {
-            ItemId = item.Id,
+            ItemId = newItem.Id,
             Quantity = vm.Quantity,
             TransactionType = TransactionType.Receive,
             Remarks = vm.Remarks,
@@ -237,9 +234,72 @@ public class TransactionService : ITransactionService
             UserId = userId
         });
 
-
         await _db.SaveChangesAsync();
+        return;
     }
+
+    // ICT
+    vm.Quantity = 1;
+
+    Item item;
+
+    if (vm.ExistingItemId.HasValue)
+    {
+        var template = await _db.Items
+            .FirstOrDefaultAsync(x => x.Id == vm.ExistingItemId);
+
+        if (template == null)
+            throw new Exception("Item template not found");
+
+        item = new Item
+        {
+            ItemCode = await GenerateItemCodeAsync(),
+            ItemName = template.ItemName,
+            Description = template.Description,
+            CategoryId = template.CategoryId,
+            Location = template.Location,
+            SerialNumber = vm.SerialNumber,
+            Quantity = 1,
+            Status = ItemStatus.Available,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+    }
+    else
+    {
+        item = new Item
+        {
+            ItemCode = await GenerateItemCodeAsync(),
+            ItemName = vm.ItemName,
+            Description = vm.Description,
+            CategoryId = vm.CategoryId,
+            Location = vm.Location,
+            SerialNumber = vm.SerialNumber,
+            Quantity = 1,
+            Status = ItemStatus.Available,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+    }
+
+    if (await _db.Items.AnyAsync(x => x.SerialNumber == item.SerialNumber))
+        throw new Exception("Serial number already exists.");
+
+    _db.Items.Add(item);
+    await _db.SaveChangesAsync();
+
+    _db.Transactions.Add(new Transaction
+    {
+        ItemId = item.Id,
+        Quantity = 1,
+        TransactionType = TransactionType.Receive,
+        Remarks = vm.Remarks,
+        TransactionDate = DateTime.UtcNow,
+        UserId = userId
+    });
+
+    await _db.SaveChangesAsync();
+}
 
     public async Task<List<Item>> GetBorrowedItemsByBorrowerAsync(int borrowerId)
     {
