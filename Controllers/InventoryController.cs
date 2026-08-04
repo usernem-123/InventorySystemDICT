@@ -63,17 +63,25 @@ public class InventoryController : Controller
 public async Task<IActionResult> Create(InventoryFormViewModel vm)
 {
     if (!ModelState.IsValid)
+{
+    foreach (var error in ModelState)
     {
-        vm.Categories = (await _categoryService.GetAllAsync())
-            .Select(c => new SelectListItem
-            {
-                Value = c.Id.ToString(),
-                Text = c.Name
-            })
-            .ToList();
+        Console.WriteLine($"{error.Key}");
 
-        return View(vm);
+        foreach (var e in error.Value.Errors)
+            Console.WriteLine($" - {e.ErrorMessage}");
     }
+
+    vm.Categories = (await _categoryService.GetAllAsync())
+        .Select(c => new SelectListItem
+        {
+            Value = c.Id.ToString(),
+            Text = c.Name
+        })
+        .ToList();
+
+    return View(vm);
+}
 
     var category = await _categoryService.GetByIdAsync(vm.CategoryId);
 

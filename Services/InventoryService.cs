@@ -102,8 +102,11 @@ public class InventoryService : IInventoryService
         item.CreatedAt = DateTime.UtcNow;
         item.UpdatedAt = DateTime.UtcNow;
 
-        if(await _db.Items.AnyAsync(x => x.SerialNumber == item.SerialNumber))
-            throw new InvalidOperationException("Serial Number already exists.");
+        if (!string.IsNullOrWhiteSpace(item.SerialNumber))
+{
+            if (await _db.Items.AnyAsync(x => x.SerialNumber == item.SerialNumber))
+                throw new InvalidOperationException("Serial Number already exists.");
+        }
 
         _db.Items.Add(item);
 
@@ -121,12 +124,15 @@ public class InventoryService : IInventoryService
             throw new InvalidOperationException(
             "Cannot edit a borrowed asset.");
 
-        if (await _db.Items.AnyAsync(x =>
-            x.SerialNumber == item.SerialNumber &&
-            x.Id != item.Id))
-        {
-            throw new InvalidOperationException(
-                "Serial number already exists.");
+        if (!string.IsNullOrWhiteSpace(item.SerialNumber))
+{
+            if (await _db.Items.AnyAsync(x =>
+                x.SerialNumber == item.SerialNumber &&
+                x.Id != item.Id))
+            {
+                throw new InvalidOperationException(
+                    "Serial number already exists.");
+            }
         }
 
         existing.ItemName = item.ItemName;
