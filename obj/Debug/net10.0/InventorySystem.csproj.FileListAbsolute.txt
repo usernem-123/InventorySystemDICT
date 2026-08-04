@@ -976,3 +976,4 @@ C:\DICT\InventorySystemDICT\obj\Debug\net10.0\refint\InventorySystem.dll
 C:\DICT\InventorySystemDICT\obj\Debug\net10.0\InventorySystem.pdb
 C:\DICT\InventorySystemDICT\obj\Debug\net10.0\InventorySystem.genruntimeconfig.cache
 C:\DICT\InventorySystemDICT\obj\Debug\net10.0\ref\InventorySystem.dll
+C:\Users\Administrator\Desktop\DICT\InventorySystemDICT\bin\Debug\net10.0\BCrypt-Net-Next.dll
