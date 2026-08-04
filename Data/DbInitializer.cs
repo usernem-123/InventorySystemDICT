@@ -25,22 +25,25 @@ public static class DbInitializer
         }
 
         if (!db.Categories.Any())
-        {
+{
             db.Categories.AddRange(
                 new Category
                 {
                     Name = "ICT",
-                    MinimumStock = 1
+                    MinimumStock = 1,
+                    Type = CategoryType.ICT
                 },
                 new Category
                 {
                     Name = "Non-ICT (Office)",
-                    MinimumStock = 10
+                    MinimumStock = 10,
+                    Type = CategoryType.NonICT
                 },
                 new Category
                 {
                     Name = "Non-ICT (Cleaning)",
-                    MinimumStock = 10
+                    MinimumStock = 10,
+                    Type = CategoryType.NonICT
                 }
             );
         }

@@ -130,7 +130,7 @@ public class TransactionsController : Controller
                 .Select(x => new SelectListItem
                 {
                     Value = x.Id.ToString(),
-                    Text = $"{x.ItemName} ({x.ItemCode})"
+                    Text = $"{x.ItemCode} - {x.ItemName} ({x.SerialNumber})"
                 })
                 .ToList(),
 
@@ -150,7 +150,7 @@ public class TransactionsController : Controller
                 .Select(x => new SelectListItem
                 {
                     Value = x.Id.ToString(),
-                    Text = $"{x.ItemName} ({x.ItemCode})"
+                    Text = $"{x.ItemCode} - {x.ItemName} ({x.SerialNumber})"
                 })
                 .ToList();
 

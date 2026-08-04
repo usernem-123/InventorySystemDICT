@@ -141,7 +141,7 @@
                 </div>
 
 
-                <div class="row mt-3">
+                <div class="row mt-3" id="quantitySection" style="display:none;">
 
                     <div class="col-md-6" id="quantitySection">
 
@@ -193,12 +193,21 @@
 
 
 @section Scripts {
-
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 <script>
 
 document.addEventListener("DOMContentLoaded", () => {
 
     const existingItem = document.getElementById("ExistingItemId");
+    const existingItemSelect = new TomSelect("#ExistingItemId", {
+        create: false,
+        allowEmptyOption: true,
+        placeholder: "Search by code, item name or serial...",
+        maxOptions: 1000,
+        searchField: ["text"],
+        openOnFocus: true,
+        highlight: true
+    });
     const category = document.getElementById("CategoryId");
     const itemName = document.getElementById("ItemName");
     const description = document.getElementById("Description");
@@ -210,11 +219,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const serialSection = document.getElementById("serialSection");
         const quantitySection = document.getElementById("quantitySection");
-
         if (category.selectedIndex <= 0) {
 
             serialSection.style.display = "block";
             quantitySection.style.display = "block";
+
+            serialNumber.disabled = false;
+            quantity.disabled = false;
 
             quantity.value = 1;
 
@@ -230,6 +241,9 @@ document.addEventListener("DOMContentLoaded", () => {
             quantitySection.style.display = "block";
 
             serialNumber.value = "";
+            serialNumber.disabled = true;
+
+            quantity.disabled = false;
 
         }
         else {
@@ -237,8 +251,10 @@ document.addEventListener("DOMContentLoaded", () => {
             serialSection.style.display = "block";
             quantitySection.style.display = "none";
 
-            quantity.value = 1;
+            serialNumber.disabled = false;
 
+            quantity.value = 1;
+            quantity.disabled = true;
         }
     }
 
@@ -250,7 +266,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (selectedOption.dataset.type === "NonICT") {
 
-                existingItem.value = "";
+                existingItemSelect.clear();
 
                 itemName.value = "";
                 description.value = "";
@@ -269,7 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             itemName.value = "";
             description.value = "";
-            category.value = "";
+            category.selectedIndex = 0;
             location.value = "";
             serialNumber.value = "";
 
